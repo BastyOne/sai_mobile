@@ -1,21 +1,34 @@
 import 'package:flutter/material.dart';
+import 'services/shared_preferences.dart';
+import 'views/faq_alumno_view.dart';
+import 'views/foro_alumno_view.dart';
+import 'views/incidencias_alumno_view.dart';
 import 'views/login_view.dart';
 import 'views/home_personal_view.dart';
 import 'views/home_alumno_view.dart';
+import 'views/preguntas_alumno.dart';
 
-void main() {
-  runApp(MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SharedPreferencesService.initialize();
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Mi App Incidencias',
       initialRoute: '/',
       routes: {
-        '/': (context) => LoginView(),
-        '/home_personal': (context) => HomePersonalView(),
+        '/': (context) => const LoginView(),
+        '/home_personal': (context) => const HomePersonalView(),
+        '/ingresarIncidencia': (context) => const IngresarIncidenciaScreen(),
+        '/ingresarPregunta': (context) => const IngresarPreguntaScreen(),
+        '/preguntasFrecuentes': (context) => const PreguntasFrecuentesScreen(),
+        '/foroEstudiantil': (context) => const ForoEstudiantilScreen(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/home_alumno') {
@@ -37,7 +50,8 @@ class MyApp extends StatelessWidget {
       },
       onUnknownRoute: (settings) {
         return MaterialPageRoute(
-            builder: (_) => Scaffold(body: Center(child: Text('Not Found'))));
+            builder: (_) =>
+                const Scaffold(body: Center(child: Text('Not Found'))));
       },
     );
   }

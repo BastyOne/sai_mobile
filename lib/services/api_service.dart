@@ -2,6 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../models/user.dart';
 import '../models/alumno.dart';
+import '../models/faq.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ApiService {
@@ -70,6 +71,27 @@ class ApiService {
     } else {
       throw Exception(
           'Failed to get alumno info. Status code: ${response.statusCode}');
+    }
+  }
+
+  Future<List<FAQ>> fetchFAQs(int categoryId) async {
+    String? token = await storage.read(key: 'token');
+    if (token == null) throw Exception('No token found in storage');
+
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/faq/categoria/$categoryId'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> faqsJson = json.decode(response.body);
+      return faqsJson.map((json) => FAQ.fromJson(json)).toList();
+    } else {
+      throw Exception(
+          'Failed to load FAQs. Status code: ${response.statusCode}');
     }
   }
 }
