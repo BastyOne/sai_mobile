@@ -5,13 +5,27 @@ import '../services/api_service.dart';
 class PreguntasFrecuentesController {
   final ApiService _apiService = ApiService();
   late TabController tabController;
-  late Future<List<FAQ>> faqsBeneficios;
-  late Future<List<FAQ>> faqsActividades;
+  Map<int, Future<List<FAQ>>> faqsPorCategoria = {};
+  late Future<List<FAQ>> todasLasFaqs;
 
-  PreguntasFrecuentesController(TickerProvider vsync,
-      {required int beneficiosId, required int actividadesId}) {
-    tabController = TabController(vsync: vsync, length: 2);
-    faqsBeneficios = _apiService.fetchFAQs(beneficiosId);
-    faqsActividades = _apiService.fetchFAQs(actividadesId);
+  PreguntasFrecuentesController(TickerProvider vsync, List<int> categoriasId) {
+    tabController = TabController(vsync: vsync, length: categoriasId.length);
+    for (int id in categoriasId) {
+      faqsPorCategoria[id] = _apiService.fetchFAQs(id);
+    }
+    todasLasFaqs = _fetchTodasLasFaqs();
+  }
+
+  Future<List<FAQ>> fetchFAQs(int categoriaId) {
+    return _apiService.fetchFAQs(categoriaId);
+  }
+
+  Future<List<FAQ>> _fetchTodasLasFaqs() async {
+    List<FAQ> faqs = [];
+    for (int id in faqsPorCategoria.keys) {
+      List<FAQ> categoryFaqs = await _apiService.fetchFAQs(id);
+      faqs.addAll(categoryFaqs);
+    }
+    return faqs;
   }
 }

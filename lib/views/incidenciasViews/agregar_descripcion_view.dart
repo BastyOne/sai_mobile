@@ -141,15 +141,7 @@ class _AgregarDescripcionScreenState extends State<AgregarDescripcionScreen> {
                 ),
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    incidenciaController
-                        .submitIncidencia(widget.userId)
-                        .then((_) {
-                      _showConfirmationDialog(context);
-                    }).catchError((error) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Error: $error')),
-                      );
-                    });
+                    _showPreConfirmationDialog(context, incidenciaController);
                   }
                 },
                 child: const Text(
@@ -164,6 +156,47 @@ class _AgregarDescripcionScreenState extends State<AgregarDescripcionScreen> {
       onLogout: () async {
         await SharedPreferencesService.removeToken();
         Navigator.pushReplacementNamed(context, '/');
+      },
+    );
+  }
+
+  void _showPreConfirmationDialog(
+      BuildContext context, IncidenciaController controller) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          title: const Text('Confirmar Envío',
+              style: TextStyle(color: Colors.blue)),
+          content: const Text('¿Está seguro que desea ingresar la incidencia?'),
+          actions: <Widget>[
+            TextButton(
+              child:
+                  const Text('Cancelar', style: TextStyle(color: Colors.red)),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child:
+                  const Text('Confirmar', style: TextStyle(color: Colors.blue)),
+              onPressed: () {
+                Navigator.of(context)
+                    .pop(); // Cerrar el diálogo de confirmación
+                controller.submitIncidencia(widget.userId).then((_) {
+                  _showConfirmationDialog(context);
+                }).catchError((error) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error: $error')),
+                  );
+                });
+              },
+            ),
+          ],
+        );
       },
     );
   }

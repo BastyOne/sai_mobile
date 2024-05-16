@@ -9,7 +9,6 @@ class PreguntasFrecuentesScreen extends StatefulWidget {
   const PreguntasFrecuentesScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _PreguntasFrecuentesScreenState createState() =>
       _PreguntasFrecuentesScreenState();
 }
@@ -17,12 +16,30 @@ class PreguntasFrecuentesScreen extends StatefulWidget {
 class _PreguntasFrecuentesScreenState extends State<PreguntasFrecuentesScreen>
     with SingleTickerProviderStateMixin {
   late PreguntasFrecuentesController _controller;
+  int _selectedCategoryId = 0; // Usar 0 para representar "todas las categorías"
+  List<int> _categories = [
+    0,
+    1,
+    2,
+    3,
+    4
+  ]; // IDs de categorías de ejemplo, incluyendo "todas las categorías"
+  Map<int, String> _categoryNames = {
+    0: 'Todas las Categorías',
+    1: 'Beneficios Estudiantiles',
+    2: 'Actividades Extraprogramáticas',
+    3: 'Trámites Secretaría',
+    4: 'Problemas Plataforma',
+  };
+  String _searchQuery = '';
 
   @override
   void initState() {
     super.initState();
-    _controller =
-        PreguntasFrecuentesController(this, beneficiosId: 1, actividadesId: 2);
+    _controller = PreguntasFrecuentesController(
+      this,
+      _categories,
+    );
   }
 
   @override
@@ -41,43 +58,67 @@ class _PreguntasFrecuentesScreenState extends State<PreguntasFrecuentesScreen>
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Text("Preguntas Frecuentes",
-                style: Theme.of(context).textTheme.headlineSmall),
-          ),
-          TabBar(
-            controller: _controller.tabController,
-            labelColor: Colors.blue,
-            unselectedLabelColor: Colors.grey,
-            tabs: const [
-              Tab(text: "Beneficios Estudiantiles"),
-              Tab(text: "Actividades Extraprogramáticas"),
-            ],
-          ),
-          Expanded(
-            child: TabBarView(
-              controller: _controller.tabController,
+            child: Row(
               children: [
-                faqList(_controller.faqsBeneficios),
-                faqList(_controller.faqsActividades),
+                PopupMenuButton<String>(
+                  icon: Icon(Icons.filter_list),
+                  onSelected: (value) {
+                    if (value == 'categoría') {
+                      _showCategoryDialog();
+                    } else if (value == 'búsqueda') {
+                      _showSearchDialog();
+                    }
+                  },
+                  itemBuilder: (BuildContext context) {
+                    return [
+                      PopupMenuItem<String>(
+                        value: 'categoría',
+                        child: Text('Categoría'),
+                      ),
+                      PopupMenuItem<String>(
+                        value: 'búsqueda',
+                        child: Text('Búsqueda por texto'),
+                      ),
+                    ];
+                  },
+                ),
+                const SizedBox(width: 8),
+                Text("Preguntas Frecuentes",
+                    style: Theme.of(context).textTheme.headlineSmall),
               ],
             ),
+          ),
+          Expanded(
+            child: faqList(),
           ),
         ],
       ),
     );
   }
 
-  Widget faqList(Future<List<FAQ>> faqs) {
+  Widget faqList() {
     return FutureBuilder<List<FAQ>>(
-      future: faqs,
+      future: _controller.todasLasFaqs,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return Center(child: Text("Error: ${snapshot.error.toString()}"));
         } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+          List<FAQ> filteredFaqs = snapshot.data!.where((faq) {
+            bool matchesSearchQuery = _searchQuery.isEmpty ||
+                faq.pregunta
+                    .toLowerCase()
+                    .contains(_searchQuery.toLowerCase()) ||
+                faq.respuesta
+                    .toLowerCase()
+                    .contains(_searchQuery.toLowerCase());
+            bool matchesCategory = _selectedCategoryId == 0 ||
+                faq.categoriaFaqId == _selectedCategoryId;
+            return matchesSearchQuery && matchesCategory;
+          }).toList();
           return ListView(
-            children: snapshot.data!.map((faq) {
+            children: filteredFaqs.map((faq) {
               return ExpansionTile(
                 title: Text(faq.pregunta),
                 children: <Widget>[
@@ -92,6 +133,88 @@ class _PreguntasFrecuentesScreenState extends State<PreguntasFrecuentesScreen>
         } else {
           return const Center(child: Text("No hay datos disponibles"));
         }
+      },
+    );
+  }
+
+  void _showCategoryDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          title: const Text('Seleccionar Categoría',
+              style: TextStyle(color: Colors.blue)),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: _categories.map((id) {
+                return Theme(
+                  data: Theme.of(context).copyWith(
+                    unselectedWidgetColor:
+                        Colors.blue, // Color for the unselected state
+                    radioTheme: RadioThemeData(
+                      fillColor: MaterialStateProperty.all(
+                          Colors.blue), // Color for the selected state
+                    ),
+                  ),
+                  child: RadioListTile<int>(
+                    title: Text(_categoryNames[id]!),
+                    value: id,
+                    groupValue: _selectedCategoryId,
+                    onChanged: (int? value) {
+                      if (value != null) {
+                        setState(() {
+                          _selectedCategoryId = value;
+                          _searchQuery = ''; // Resetear la búsqueda por texto
+                        });
+                        Navigator.of(context).pop();
+                      }
+                    },
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showSearchDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          title: const Text('Buscar por texto',
+              style: TextStyle(color: Colors.blue)),
+          content: TextField(
+            decoration: InputDecoration(
+              hintText: 'Buscar...',
+              prefixIcon: Icon(Icons.search),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+            ),
+            onChanged: (value) {
+              setState(() {
+                _searchQuery = value;
+              });
+            },
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cerrar', style: TextStyle(color: Colors.blue)),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
       },
     );
   }
