@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import '../models/mensaje_diario.dart';
 import '../services/shared_preferences.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/student_info_card.dart';
 import '../widgets/custom_drawer.dart';
 import '../models/alumno.dart';
 import '../services/api_service.dart';
+import '../controllers/mensaje_diario_controller.dart';
+import 'package:provider/provider.dart';
 
 class HomeAlumnoView extends StatefulWidget {
   final int userId;
@@ -18,16 +21,16 @@ class HomeAlumnoView extends StatefulWidget {
 
 class _HomeAlumnoViewState extends State<HomeAlumnoView> {
   late Future<AlumnoInfo?> alumnoInfoFuture;
-  final List<String> imgList = [
-    'https://portalalumnos.ucm.cl/v2/assets/avisos/beca_fotocopias_2024.jpg',
-    'https://portalalumnos.ucm.cl/v2/assets/avisos/lms_2024.png',
-  ];
   final CarouselController _controller = CarouselController();
 
   @override
   void initState() {
     super.initState();
     alumnoInfoFuture = ApiService().getAlumnoInfo(widget.userId);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<MensajeDiarioController>(context, listen: false)
+          .fetchMensajesDiarios();
+    });
   }
 
   void _logout(BuildContext context) async {
@@ -52,53 +55,17 @@ class _HomeAlumnoViewState extends State<HomeAlumnoView> {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.only(top: 20.0),
-            child: Stack(
-              children: [
-                CarouselSlider(
-                  carouselController: _controller,
-                  options: CarouselOptions(
-                    autoPlay: true,
-                    aspectRatio: 2.0,
-                    enlargeCenterPage: true,
-                  ),
-                  items: imgList
-                      .map((item) => Container(
-                            child: Center(
-                              child: Image.network(item,
-                                  fit: BoxFit.cover, width: 1000),
-                            ),
-                          ))
-                      .toList(),
-                ),
-                Positioned(
-                  left: 15,
-                  top: 0,
-                  bottom: 0,
-                  child: Center(
-                    child: IconButton(
-                      icon: const Icon(Icons.arrow_back_ios,
-                          size: 30, color: Colors.black),
-                      onPressed: () => _controller.previousPage(
-                          duration: const Duration(milliseconds: 400),
-                          curve: Curves.easeInOut),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  right: 15,
-                  top: 0,
-                  bottom: 0,
-                  child: Center(
-                    child: IconButton(
-                      icon: const Icon(Icons.arrow_forward_ios,
-                          size: 30, color: Colors.black),
-                      onPressed: () => _controller.nextPage(
-                          duration: const Duration(milliseconds: 400),
-                          curve: Curves.easeInOut),
-                    ),
-                  ),
-                ),
-              ],
+            child: Consumer<MensajeDiarioController>(
+              builder: (context, controller, child) {
+                if (controller.isLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (controller.errorMessage.isNotEmpty) {
+                  return Center(
+                      child: Text("Error: ${controller.errorMessage}"));
+                } else {
+                  return buildCarousel(controller.mensajesDiarios);
+                }
+              },
             ),
           ),
           Expanded(
@@ -129,25 +96,91 @@ class _HomeAlumnoViewState extends State<HomeAlumnoView> {
     );
   }
 
+  Widget buildCarousel(List<MensajeDiario> mensajes) {
+    final imgList = mensajes.expand((mensaje) => mensaje.imagenes).toList();
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 10.0),
+          child: Stack(
+            children: [
+              CarouselSlider(
+                carouselController: _controller,
+                options: CarouselOptions(
+                  autoPlay: true,
+                  aspectRatio: 2.0,
+                  enlargeCenterPage: true,
+                ),
+                items: imgList
+                    .map((item) => Center(
+                          child: Image.network(item,
+                              fit: BoxFit.cover, width: 1000),
+                        ))
+                    .toList(),
+              ),
+              Positioned(
+                left: 15,
+                top: 0,
+                bottom: 0,
+                child: Center(
+                  child: IconButton(
+                    icon: const Icon(Icons.arrow_back_ios,
+                        size: 30, color: Colors.black),
+                    onPressed: () => _controller.previousPage(
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeInOut),
+                  ),
+                ),
+              ),
+              Positioned(
+                right: 15,
+                top: 0,
+                bottom: 0,
+                child: Center(
+                  child: IconButton(
+                    icon: const Icon(Icons.arrow_forward_ios,
+                        size: 30, color: Colors.black),
+                    onPressed: () => _controller.nextPage(
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeInOut),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget buttonSection() {
     return Column(
       children: [
-        customButton('Ingresar Incidencia', Icons.note, '#2196f3',
-            '/ingresarIncidencia'),
-        customButton('Ingresar Pregunta', Icons.question_answer, '#03A9F4',
-            '/ingresarPregunta'),
-        customButton('Preguntas Frecuentes', Icons.help, '#29B6F6',
-            '/preguntasFrecuentes'),
-        customButton(
-            'Foro Estudiantil', Icons.edit, '#4FC3F7', '/foroEstudiantil'),
-        customButton(
-            'Portal de Pagos', Icons.payment, '#81D4FA', '/portalPagos'),
+        customButton('Ingresar Incidencia', Icons.note, '#2196f3', () {
+          Navigator.pushNamed(
+            context,
+            '/ingresarIncidencia',
+            arguments: {'userId': widget.userId},
+          );
+        }),
+        customButton('Ingresar Pregunta', Icons.question_answer, '#03A9F4', () {
+          Navigator.pushNamed(context, '/ingresarPregunta');
+        }),
+        customButton('Preguntas Frecuentes', Icons.help, '#29B6F6', () {
+          Navigator.pushNamed(context, '/preguntasFrecuentes');
+        }),
+        customButton('Foro Estudiantil', Icons.edit, '#4FC3F7', () {
+          Navigator.pushNamed(context, '/foroEstudiantil');
+        }),
+        customButton('Portal de Pagos', Icons.payment, '#81D4FA', () {
+          Navigator.pushNamed(context, '/portalPagos');
+        }),
       ],
     );
   }
 
   Widget customButton(
-      String text, IconData icon, String color, String routeName) {
+      String text, IconData icon, String color, VoidCallback onPressed) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor:
@@ -159,9 +192,7 @@ class _HomeAlumnoViewState extends State<HomeAlumnoView> {
           borderRadius: BorderRadius.zero,
         ),
       ),
-      onPressed: () {
-        Navigator.pushNamed(context, routeName);
-      },
+      onPressed: onPressed,
       child: Column(
         mainAxisSize: MainAxisSize.min, // Use min size that needed by child
         mainAxisAlignment:

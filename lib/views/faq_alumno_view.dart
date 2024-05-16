@@ -1,34 +1,28 @@
 import 'package:flutter/material.dart';
+import '../controllers/faq_controller.dart';
 import '../models/faq.dart';
-import '../services/api_service.dart';
 import '../services/shared_preferences.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_drawer.dart';
 
 class PreguntasFrecuentesScreen extends StatefulWidget {
-  const PreguntasFrecuentesScreen({Key? key}) : super(key: key);
+  const PreguntasFrecuentesScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _PreguntasFrecuentesScreenState createState() =>
       _PreguntasFrecuentesScreenState();
 }
 
 class _PreguntasFrecuentesScreenState extends State<PreguntasFrecuentesScreen>
     with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-  final ApiService _apiService = ApiService();
-
-  late Future<List<FAQ>> faqsBeneficios;
-  late Future<List<FAQ>> faqsActividades;
+  late PreguntasFrecuentesController _controller;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(vsync: this, length: 2);
-    faqsBeneficios = _apiService
-        .fetchFAQs(1); // Asume que 2 es el ID para 'Beneficios Estudiantiles'
-    faqsActividades = _apiService.fetchFAQs(
-        2); // Asume que 3 es el ID para 'Actividades Extraprogramáticas'
+    _controller =
+        PreguntasFrecuentesController(this, beneficiosId: 1, actividadesId: 2);
   }
 
   @override
@@ -48,10 +42,10 @@ class _PreguntasFrecuentesScreenState extends State<PreguntasFrecuentesScreen>
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text("Preguntas Frecuentes",
-                style: Theme.of(context).textTheme.headline5),
+                style: Theme.of(context).textTheme.headlineSmall),
           ),
           TabBar(
-            controller: _tabController,
+            controller: _controller.tabController,
             labelColor: Colors.blue,
             unselectedLabelColor: Colors.grey,
             tabs: const [
@@ -61,10 +55,10 @@ class _PreguntasFrecuentesScreenState extends State<PreguntasFrecuentesScreen>
           ),
           Expanded(
             child: TabBarView(
-              controller: _tabController,
+              controller: _controller.tabController,
               children: [
-                faqList(faqsBeneficios),
-                faqList(faqsActividades),
+                faqList(_controller.faqsBeneficios),
+                faqList(_controller.faqsActividades),
               ],
             ),
           ),

@@ -1,12 +1,14 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:io';
+import '../models/mensaje_diario.dart';
 import '../models/user.dart';
 import '../models/alumno.dart';
 import '../models/faq.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ApiService {
-  final String baseUrl = 'https://backend-s-a-p-s.vercel.app';
+  final String baseUrl = 'http://192.168.100.81:3000';
   final storage =
       const FlutterSecureStorage(); // Instancia de almacenamiento seguro
 
@@ -92,6 +94,111 @@ class ApiService {
     } else {
       throw Exception(
           'Failed to load FAQs. Status code: ${response.statusCode}');
+    }
+  }
+
+  Future<List<MensajeDiario>> fetchMensajesDiarios() async {
+    String? token = await storage.read(key: 'token');
+    if (token == null) throw Exception('No token found in storage');
+
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/mensajes-diarios'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = json.decode(response.body);
+      return data.map((json) => MensajeDiario.fromJson(json)).toList();
+    } else {
+      throw Exception(
+          'Failed to load mensajes diarios. Status code: ${response.statusCode}, Response: ${response.body}');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> fetchCategoriasPadre() async {
+    String? token = await storage.read(key: 'token');
+    if (token == null) throw Exception('No token found in storage');
+
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/incidencia/categoriasPadre'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return List<Map<String, dynamic>>.from(json.decode(response.body));
+    } else {
+      throw Exception(
+          'Failed to load categorias padre. Status code: ${response.statusCode}');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> fetchCategoriasHijo(int padreId) async {
+    String? token = await storage.read(key: 'token');
+    if (token == null) throw Exception('No token found in storage');
+
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/incidencia/categoriasHijo/$padreId'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return List<Map<String, dynamic>>.from(json.decode(response.body));
+    } else {
+      throw Exception(
+          'Failed to load categorias hijo. Status code: ${response.statusCode}');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> fetchPersonal() async {
+    String? token = await storage.read(key: 'token');
+    if (token == null) throw Exception('No token found in storage');
+
+    final response = await http.get(
+      Uri.parse('$baseUrl/personal'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return List<Map<String, dynamic>>.from(json.decode(response.body));
+    } else {
+      throw Exception(
+          'Failed to load personal. Status code: ${response.statusCode}');
+    }
+  }
+
+  Future<void> createIncidencia(
+      Map<String, dynamic> incidenciaData, File? archivo) async {
+    String? token = await storage.read(key: 'token');
+    if (token == null) throw Exception('No token found in storage');
+
+    final request =
+        http.MultipartRequest('POST', Uri.parse('$baseUrl/api/incidencia'));
+    request.headers['Authorization'] = 'Bearer $token';
+    request.fields.addAll(
+        incidenciaData.map((key, value) => MapEntry(key, value.toString())));
+
+    if (archivo != null) {
+      request.files
+          .add(await http.MultipartFile.fromPath('archivo', archivo.path));
+    }
+
+    final response = await request.send();
+
+    if (response.statusCode != 201) {
+      throw Exception(
+          'Failed to create incidencia. Status code: ${response.statusCode}');
     }
   }
 }

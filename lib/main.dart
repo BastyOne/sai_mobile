@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'services/shared_preferences.dart';
+import 'controllers/mensaje_diario_controller.dart';
+import 'controllers/incidencia_controller.dart';
 import 'views/faq_alumno_view.dart';
 import 'views/foro_alumno_view.dart';
-import 'views/incidencias_alumno_view.dart';
 import 'views/login_view.dart';
 import 'views/home_personal_view.dart';
 import 'views/home_alumno_view.dart';
-import 'views/preguntas_alumno.dart';
+import 'views/preguntas_alumno_view.dart';
+import 'views/incidenciasViews/seleccionar_categoria_view.dart';
+import 'views/incidenciasViews/seleccionar_subcategoria_view.dart';
+import 'views/incidenciasViews/agregar_descripcion_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,40 +24,64 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Mi App Incidencias',
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const LoginView(),
-        '/home_personal': (context) => const HomePersonalView(),
-        '/ingresarIncidencia': (context) => const IngresarIncidenciaScreen(),
-        '/ingresarPregunta': (context) => const IngresarPreguntaScreen(),
-        '/preguntasFrecuentes': (context) => const PreguntasFrecuentesScreen(),
-        '/foroEstudiantil': (context) => const ForoEstudiantilScreen(),
-      },
-      onGenerateRoute: (settings) {
-        if (settings.name == '/home_alumno') {
-          final args = settings.arguments as Map<String, dynamic>;
-          if (args['userId'] is int) {
-            // Verifica que 'userId' sea un entero
-            return MaterialPageRoute(
-              builder: (context) {
-                return HomeAlumnoView(userId: args['userId']);
-              },
-            );
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => MensajeDiarioController()),
+        ChangeNotifierProvider(create: (_) => IncidenciaController()),
+      ],
+      child: MaterialApp(
+        title: 'Mi App Incidencias',
+        initialRoute: '/',
+        routes: {
+          '/': (context) => const LoginView(),
+          '/home_personal': (context) => const HomePersonalView(),
+          '/ingresarIncidencia': (context) {
+            final args = ModalRoute.of(context)!.settings.arguments
+                as Map<String, dynamic>;
+            return SeleccionarCategoriaPadreScreen(userId: args['userId']);
+          },
+          '/ingresarPregunta': (context) => const IngresarPreguntaScreen(),
+          '/preguntasFrecuentes': (context) =>
+              const PreguntasFrecuentesScreen(),
+          '/foroEstudiantil': (context) => const ForoEstudiantilScreen(),
+        },
+        onGenerateRoute: (settings) {
+          if (settings.name == '/home_alumno') {
+            final args = settings.arguments as Map<String, dynamic>;
+            if (args['userId'] is int) {
+              return MaterialPageRoute(
+                builder: (context) {
+                  return HomeAlumnoView(userId: args['userId']);
+                },
+              );
+            }
+          } else if (settings.name == '/seleccionarCategoriaHijo') {
+            final args = settings.arguments as Map<String, dynamic>;
+            if (args['userId'] is int) {
+              return MaterialPageRoute(
+                builder: (context) {
+                  return SeleccionarCategoriaHijoScreen(userId: args['userId']);
+                },
+              );
+            }
+          } else if (settings.name == '/agregarDescripcion') {
+            final args = settings.arguments as Map<String, dynamic>;
+            if (args['userId'] is int) {
+              return MaterialPageRoute(
+                builder: (context) {
+                  return AgregarDescripcionScreen(userId: args['userId']);
+                },
+              );
+            }
           }
-        }
-        // Define other routes with parameters here
-        // ...
-
-        // Return null for unhandled routes which will invoke onUnknownRoute
-        return null;
-      },
-      onUnknownRoute: (settings) {
-        return MaterialPageRoute(
-            builder: (_) =>
-                const Scaffold(body: Center(child: Text('Not Found'))));
-      },
+          return null;
+        },
+        onUnknownRoute: (settings) {
+          return MaterialPageRoute(
+              builder: (_) =>
+                  const Scaffold(body: Center(child: Text('Not Found'))));
+        },
+      ),
     );
   }
 }
