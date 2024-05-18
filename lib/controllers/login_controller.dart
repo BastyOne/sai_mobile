@@ -11,16 +11,15 @@ class LoginController {
       if (user != null) {
         print('Login successful. User ID: ${user.userId}');
         await SharedPreferencesService.setToken(user.token);
-        print('User Type: ${user.userType}'); // Imprime el tipo de usuario
+        print('User Type: ${user.userType}');
 
-        // Redirecciona según el tipo de usuario
         switch (user.userType) {
           case 'alumno':
             print('Navigating to HomeAlumnoView with userId: ${user.userId}');
             Navigator.pushReplacementNamed(
               context,
               '/home_alumno',
-              arguments: {'userId': user.userId},
+              arguments: {'userId': user.userId, 'carreraId': user.carreraId},
             );
             break;
           case 'personal':

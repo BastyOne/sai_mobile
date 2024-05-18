@@ -1,11 +1,12 @@
-// views/incidenciasViews/incidencias_alumno_view.dart
 import 'package:flutter/material.dart';
 import 'seleccionar_categoria_view.dart';
 
 class IncidenciasAlumnoView extends StatelessWidget {
   final int userId;
+  final int carreraId; // Añadir este campo
 
-  const IncidenciasAlumnoView({super.key, required this.userId});
+  const IncidenciasAlumnoView(
+      {super.key, required this.userId, required this.carreraId});
 
   @override
   Widget build(BuildContext context) {
@@ -17,8 +18,8 @@ class IncidenciasAlumnoView extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) =>
-                    SeleccionarCategoriaPadreScreen(userId: userId),
+                builder: (context) => SeleccionarCategoriaPadreScreen(
+                    userId: userId, carreraId: carreraId), // Pasar carreraId
               ),
             );
           },

@@ -64,12 +64,14 @@ class IncidenciaController with ChangeNotifier {
   }
 
   // Método para crear incidencia
-  Future<void> submitIncidencia(int alumnoId) async {
+  Future<void> submitIncidencia(int alumnoId, int carreraId) async {
+    // Añadir carreraId
     final incidenciaData = {
       'alumno_id': alumnoId,
       'categoriaincidencia_id': _selectedCategoriaHijo!,
       'descripcion': _descripcion!,
       'personal_id': _selectedPersonal!,
+      'carrera_id': carreraId, // Añadir este campo
       'prioridad': _prioridad!,
     };
 

@@ -4,6 +4,7 @@ class Incidencia {
   final int categoriaIncidenciaId;
   final String descripcion;
   final int personalId;
+  final int carreraId; // Añadir este campo
   final String estado;
   final DateTime fechaHoraCreacion;
   final bool reabierta;
@@ -15,6 +16,7 @@ class Incidencia {
     required this.categoriaIncidenciaId,
     required this.descripcion,
     required this.personalId,
+    required this.carreraId, // Añadir este campo
     required this.estado,
     required this.fechaHoraCreacion,
     required this.reabierta,
@@ -28,6 +30,7 @@ class Incidencia {
       categoriaIncidenciaId: json['categoriaIncidencia_id'],
       descripcion: json['descripcion'],
       personalId: json['personal_id'],
+      carreraId: json['carrera_id'], // Añadir este campo
       estado: json['estado'],
       fechaHoraCreacion: DateTime.parse(json['fechaHoraCreacion']),
       reabierta: json['reabierta'],
@@ -42,6 +45,7 @@ class Incidencia {
       'categoriaIncidencia_id': categoriaIncidenciaId,
       'descripcion': descripcion,
       'personal_id': personalId,
+      'carrera_id': carreraId, // Añadir este campo
       'estado': estado,
       'fechaHoraCreacion': fechaHoraCreacion.toIso8601String(),
       'reabierta': reabierta,

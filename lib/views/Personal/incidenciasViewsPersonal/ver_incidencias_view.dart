@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import '../services/shared_preferences.dart';
-import '../widgets/custom_app_bar.dart';
-import '../widgets/custom_drawer.dart';
+import '../../../services/shared_preferences.dart';
+import '../../../widgets/custom_app_bar.dart';
+import '../../../widgets/custom_drawer.dart';
 
-class HomePersonalView extends StatelessWidget {
-  const HomePersonalView({super.key});
+class VerIncidenciasScreen extends StatelessWidget {
+  const VerIncidenciasScreen({super.key});
 
   void _logout(BuildContext context) async {
     await SharedPreferencesService.removeToken();
@@ -25,7 +25,7 @@ class HomePersonalView extends StatelessWidget {
         onLogout: () => _logout(context),
       ),
       body: const Center(
-        child: Text("Bienvenido al panel de personal"),
+        child: Text("Incidencias"),
       ),
     );
   }

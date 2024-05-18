@@ -2,14 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import '../../controllers/incidencia_controller.dart';
+import '../../../controllers/incidencia_controller.dart';
 import 'base_incidencias_view.dart';
-import '../../services/shared_preferences.dart';
+import '../../../services/shared_preferences.dart';
+import 'seleccionar_categoria_view.dart';
 
 class AgregarDescripcionScreen extends StatefulWidget {
   final int userId;
+  final int carreraId;
 
-  const AgregarDescripcionScreen({Key? key, required this.userId})
+  const AgregarDescripcionScreen(
+      {Key? key, required this.userId, required this.carreraId})
       : super(key: key);
 
   @override
@@ -56,6 +59,12 @@ class _AgregarDescripcionScreenState extends State<AgregarDescripcionScreen> {
                     onChanged: (value) {
                       incidenciaController.descripcion = value;
                     },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese una descripción';
+                      }
+                      return null;
+                    },
                   ),
                 ),
                 const SizedBox(height: 32),
@@ -98,8 +107,7 @@ class _AgregarDescripcionScreenState extends State<AgregarDescripcionScreen> {
                     ),
                   ),
                 const SizedBox(height: 160),
-                const SizedBox(
-                    height: 32), // Espacio adicional antes de los botones
+                const SizedBox(height: 32),
               ],
             ),
           ),
@@ -164,7 +172,7 @@ class _AgregarDescripcionScreenState extends State<AgregarDescripcionScreen> {
       BuildContext context, IncidenciaController controller) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8.0),
@@ -177,16 +185,17 @@ class _AgregarDescripcionScreenState extends State<AgregarDescripcionScreen> {
               child:
                   const Text('Cancelar', style: TextStyle(color: Colors.red)),
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(dialogContext).pop();
               },
             ),
             TextButton(
               child:
                   const Text('Confirmar', style: TextStyle(color: Colors.blue)),
               onPressed: () {
-                Navigator.of(context)
-                    .pop(); // Cerrar el diálogo de confirmación
-                controller.submitIncidencia(widget.userId).then((_) {
+                Navigator.of(dialogContext).pop();
+                controller
+                    .submitIncidencia(widget.userId, widget.carreraId)
+                    .then((_) {
                   _showConfirmationDialog(context);
                 }).catchError((error) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -204,7 +213,7 @@ class _AgregarDescripcionScreenState extends State<AgregarDescripcionScreen> {
   void _showConfirmationDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8.0),
@@ -217,12 +226,21 @@ class _AgregarDescripcionScreenState extends State<AgregarDescripcionScreen> {
               child:
                   const Text('Aceptar', style: TextStyle(color: Colors.blue)),
               onPressed: () {
+                Navigator.of(dialogContext).pop(); // Close the dialog
                 setState(() {
                   Provider.of<IncidenciaController>(context, listen: false)
                       .archivo = null;
                 });
-                Navigator.popUntil(
-                    context, ModalRoute.withName('/ingresarIncidencia'));
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SeleccionarCategoriaPadreScreen(
+                      userId: widget.userId,
+                      carreraId: widget.carreraId,
+                    ),
+                  ),
+                  (Route<dynamic> route) => route.isFirst,
+                );
               },
             ),
           ],

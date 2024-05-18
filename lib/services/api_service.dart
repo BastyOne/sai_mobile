@@ -2,6 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io';
 import '../models/mensaje_diario.dart';
+import '../models/personal.dart';
 import '../models/user.dart';
 import '../models/alumno.dart';
 import '../models/faq.dart';
@@ -9,8 +10,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ApiService {
   final String baseUrl = 'http://192.168.100.81:3000';
-  final storage =
-      const FlutterSecureStorage(); // Instancia de almacenamiento seguro
+  final storage = const FlutterSecureStorage();
 
   Future<User?> login(String rut, String password) async {
     final response = await http.post(
@@ -21,14 +21,13 @@ class ApiService {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      await storage.write(
-          key: 'token', value: data['token']); // Guardar el token recibido
-      // Devuelve un nuevo User con todos los datos recibidos
+      await storage.write(key: 'token', value: data['token']);
       return User.fromJson({
         'token': data['token'],
         'userId': data['userId'],
         'userType': data['userType'],
         'rol': data['rol'],
+        'carrera_id': data['carrera_id'],
       });
     } else {
       throw Exception(
@@ -37,14 +36,13 @@ class ApiService {
   }
 
   Future<dynamic> getProtectedData() async {
-    String? token =
-        await storage.read(key: 'token'); // Leer el token almacenado
+    String? token = await storage.read(key: 'token');
 
     final response = await http.get(
       Uri.parse('$baseUrl/protected-route'),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token', // Usar el token en los headers
+        'Authorization': 'Bearer $token',
       },
     );
 
@@ -199,6 +197,26 @@ class ApiService {
     if (response.statusCode != 201) {
       throw Exception(
           'Failed to create incidencia. Status code: ${response.statusCode}');
+    }
+  }
+
+  Future<PersonalInfo?> getPersonalInfo(int userId) async {
+    String? token = await storage.read(key: 'token');
+    if (token == null) throw Exception('No token found in storage');
+
+    final response = await http.get(
+      Uri.parse('$baseUrl/personal/$userId'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return PersonalInfo.fromJson(json.decode(response.body));
+    } else {
+      throw Exception(
+          'Failed to get personal info. Status code: ${response.statusCode}');
     }
   }
 }

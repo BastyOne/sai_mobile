@@ -1,32 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import '../models/mensaje_diario.dart';
-import '../services/shared_preferences.dart';
-import '../widgets/custom_app_bar.dart';
-import '../widgets/student_info_card.dart';
-import '../widgets/custom_drawer.dart';
-import '../models/alumno.dart';
-import '../services/api_service.dart';
-import '../controllers/mensaje_diario_controller.dart';
+import '../../models/mensaje_diario.dart';
+import '../../services/shared_preferences.dart';
+import '../../widgets/custom_app_bar.dart';
+import '../../widgets/custom_drawer.dart';
+import '../../widgets/personal_info_card.dart';
+import '../../models/personal.dart';
+import '../../services/api_service.dart';
+import '../../controllers/mensaje_diario_controller.dart';
 import 'package:provider/provider.dart';
 
-class HomeAlumnoView extends StatefulWidget {
+class HomePersonalView extends StatefulWidget {
   final int userId;
 
-  const HomeAlumnoView({super.key, required this.userId});
+  const HomePersonalView({super.key, required this.userId});
 
   @override
-  _HomeAlumnoViewState createState() => _HomeAlumnoViewState();
+  _HomePersonalViewState createState() => _HomePersonalViewState();
 }
 
-class _HomeAlumnoViewState extends State<HomeAlumnoView> {
-  late Future<AlumnoInfo?> alumnoInfoFuture;
+class _HomePersonalViewState extends State<HomePersonalView> {
+  late Future<PersonalInfo?> personalInfoFuture;
   final CarouselController _controller = CarouselController();
 
   @override
   void initState() {
     super.initState();
-    alumnoInfoFuture = ApiService().getAlumnoInfo(widget.userId);
+    personalInfoFuture = ApiService().getPersonalInfo(widget.userId);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<MensajeDiarioController>(context, listen: false)
           .fetchMensajesDiarios();
@@ -69,8 +69,8 @@ class _HomeAlumnoViewState extends State<HomeAlumnoView> {
             ),
           ),
           Expanded(
-            child: FutureBuilder<AlumnoInfo?>(
-              future: alumnoInfoFuture,
+            child: FutureBuilder<PersonalInfo?>(
+              future: personalInfoFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -80,13 +80,13 @@ class _HomeAlumnoViewState extends State<HomeAlumnoView> {
                   return ListView(
                     padding: const EdgeInsets.all(16.0),
                     children: <Widget>[
-                      StudentInfoCard(alumno: snapshot.data!),
+                      PersonalInfoCard(personal: snapshot.data!),
                       buttonSection(),
                     ],
                   );
                 } else {
                   return const Center(
-                      child: Text('No se encontró información del alumno.'));
+                      child: Text('No se encontró información del personal.'));
                 }
               },
             ),
@@ -156,12 +156,8 @@ class _HomeAlumnoViewState extends State<HomeAlumnoView> {
   Widget buttonSection() {
     return Column(
       children: [
-        customButton('Ingresar Incidencia', Icons.note, '#2196f3', () {
-          Navigator.pushNamed(
-            context,
-            '/ingresarIncidencia',
-            arguments: {'userId': widget.userId},
-          );
+        customButton('Incidencias', Icons.note, '#2196f3', () {
+          Navigator.pushNamed(context, '/incidenciasPersonal');
         }),
         customButton('Ingresar Pregunta', Icons.question_answer, '#03A9F4', () {
           Navigator.pushNamed(context, '/ingresarPregunta');
@@ -172,8 +168,8 @@ class _HomeAlumnoViewState extends State<HomeAlumnoView> {
         customButton('Foro Estudiantil', Icons.edit, '#4FC3F7', () {
           Navigator.pushNamed(context, '/foroEstudiantil');
         }),
-        customButton('Portal de Pagos', Icons.payment, '#81D4FA', () {
-          Navigator.pushNamed(context, '/portalPagos');
+        customButton('Estado Incidencias', Icons.task, '#81D4FA', () {
+          Navigator.pushNamed(context, '/incidencias');
         }),
       ],
     );
@@ -185,21 +181,19 @@ class _HomeAlumnoViewState extends State<HomeAlumnoView> {
       style: ElevatedButton.styleFrom(
         backgroundColor:
             Color(int.parse(color.substring(1, 7), radix: 16) + 0xFF000000),
-        minimumSize: const Size(double.infinity, 60), // sets minimum size
+        minimumSize: const Size(double.infinity, 60),
         padding: const EdgeInsets.symmetric(vertical: 10),
         shape: const RoundedRectangleBorder(
-          // Hace que los bordes del botón sean rectos
           borderRadius: BorderRadius.zero,
         ),
       ),
       onPressed: onPressed,
       child: Column(
-        mainAxisSize: MainAxisSize.min, // Use min size that needed by child
-        mainAxisAlignment:
-            MainAxisAlignment.center, // Center children vertically
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Icon(icon, color: Colors.white), // Icon
-          Text(text, style: const TextStyle(color: Colors.white)), // Text
+          Icon(icon, color: Colors.white),
+          Text(text, style: const TextStyle(color: Colors.white)),
         ],
       ),
     );

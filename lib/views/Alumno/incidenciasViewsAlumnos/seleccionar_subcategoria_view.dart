@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../controllers/incidencia_controller.dart';
+import '../../../controllers/incidencia_controller.dart';
 import 'base_incidencias_view.dart';
-import '../../services/shared_preferences.dart';
+import '../../../services/shared_preferences.dart';
 
 class SeleccionarCategoriaHijoScreen extends StatefulWidget {
   final int userId;
+  final int carreraId; // Añadir este campo
 
-  const SeleccionarCategoriaHijoScreen({Key? key, required this.userId})
+  const SeleccionarCategoriaHijoScreen(
+      {Key? key, required this.userId, required this.carreraId})
       : super(key: key);
 
   @override
@@ -24,7 +26,7 @@ class _SeleccionarCategoriaHijoScreenState
   @override
   Widget build(BuildContext context) {
     final incidenciaController = Provider.of<IncidenciaController>(context);
-    const double buttonWidth = 100; // Ancho de los botones de prioridad
+    const double buttonWidth = 100;
 
     return BaseScreen(
       title: 'Especifique su incidencia',
@@ -50,8 +52,7 @@ class _SeleccionarCategoriaHijoScreenState
               const SizedBox(height: 16),
               Center(child: _buildPrioritySelector(buttonWidth)),
               const SizedBox(height: 80),
-              const SizedBox(
-                  height: 32), // Espacio adicional antes de los botones
+              const SizedBox(height: 32),
             ],
           ),
         ),
@@ -93,7 +94,9 @@ class _SeleccionarCategoriaHijoScreenState
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return const Text('No personal found');
         } else {
-          final personalList = snapshot.data!;
+          final personalList = snapshot.data!
+              .where((personal) => personal['carrera_id'] == widget.carreraId)
+              .toList();
           return Wrap(
             spacing: 16.0,
             runSpacing: 16.0,
@@ -115,8 +118,7 @@ class _SeleccionarCategoriaHijoScreenState
                   ),
                   child: Center(
                     child: Text(
-                      personal['tipopersona'][
-                          'nombre'], // Accedemos al nombre dentro de tipopersona
+                      personal['tipopersona']['nombre'],
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color:
@@ -148,8 +150,7 @@ class _SeleccionarCategoriaHijoScreenState
         } else {
           final categoryList = snapshot.data!;
           return Container(
-            width:
-                100 * 3 + 32, // Ancho fijo basado en los botones de prioridad
+            width: 100 * 3 + 32,
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
             decoration: BoxDecoration(
               border: Border.all(color: const Color(0xFF2196F3)),
@@ -259,7 +260,10 @@ class _SeleccionarCategoriaHijoScreenState
                 Navigator.pushNamed(
                   context,
                   '/agregarDescripcion',
-                  arguments: {'userId': widget.userId},
+                  arguments: {
+                    'userId': widget.userId,
+                    'carreraId': widget.carreraId
+                  },
                 );
               }
             : null,

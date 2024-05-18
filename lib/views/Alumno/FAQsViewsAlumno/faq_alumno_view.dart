@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../controllers/faq_controller.dart';
-import '../models/faq.dart';
-import '../services/shared_preferences.dart';
-import '../widgets/custom_app_bar.dart';
-import '../widgets/custom_drawer.dart';
+import '../../../controllers/faq_controller.dart';
+import '../../../models/faq.dart';
+import '../../../services/shared_preferences.dart';
+import '../../../widgets/custom_app_bar.dart';
+import '../../../widgets/custom_drawer.dart';
 
 class PreguntasFrecuentesScreen extends StatefulWidget {
   const PreguntasFrecuentesScreen({super.key});

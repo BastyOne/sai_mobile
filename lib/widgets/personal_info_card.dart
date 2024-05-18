@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import '../models/alumno.dart';
+import '../models/personal.dart';
 
-class StudentInfoCard extends StatelessWidget {
-  final AlumnoInfo alumno;
+class PersonalInfoCard extends StatelessWidget {
+  final PersonalInfo personal;
 
-  const StudentInfoCard({super.key, required this.alumno});
+  const PersonalInfoCard({super.key, required this.personal});
 
   @override
   Widget build(BuildContext context) {
@@ -17,13 +17,12 @@ class StudentInfoCard extends StatelessWidget {
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(8.0),
-        color: Colors.blue[900], // Ajusta el color según tu diseño
+        color: Colors.blue[900],
         child: Row(
           children: [
-            // Si alumno.fotoUrl es null, podrías mostrar un Placeholder o una imagen por defecto
             CircleAvatar(
-              backgroundImage: alumno.fotoUrl != null
-                  ? NetworkImage(alumno.fotoUrl!)
+              backgroundImage: personal.fotoUrl != null
+                  ? NetworkImage(personal.fotoUrl!)
                   : const AssetImage('assets/images/defauluser.jpg')
                       as ImageProvider<Object>?,
               radius: 50.0,
@@ -34,7 +33,7 @@ class StudentInfoCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${alumno.nombre} ${alumno.apellido}',
+                    personal.nombre,
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -42,21 +41,28 @@ class StudentInfoCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    alumno.rut,
+                    personal.rut,
                     style: TextStyle(
                       color: Colors.white.withOpacity(0.7),
                       fontSize: 16.0,
                     ),
                   ),
                   Text(
-                    alumno.email,
+                    personal.email,
                     style: TextStyle(
                       color: Colors.white.withOpacity(0.7),
                       fontSize: 16.0,
                     ),
                   ),
                   Text(
-                    'Regular en ${alumno.carreraNombre}',
+                    personal.tipopersona,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16.0,
+                    ),
+                  ),
+                  Text(
+                    personal.carreraNombre,
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 16.0,

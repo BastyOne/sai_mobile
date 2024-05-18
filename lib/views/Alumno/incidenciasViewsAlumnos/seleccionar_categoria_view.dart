@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../controllers/incidencia_controller.dart';
+import '../../../controllers/incidencia_controller.dart';
 import 'base_incidencias_view.dart';
-import '../../services/shared_preferences.dart';
+import '../../../services/shared_preferences.dart';
 
 class SeleccionarCategoriaPadreScreen extends StatefulWidget {
   final int userId;
+  final int carreraId; // Añadir este campo
 
-  const SeleccionarCategoriaPadreScreen({required this.userId});
+  const SeleccionarCategoriaPadreScreen(
+      {required this.userId, required this.carreraId});
 
   @override
   _SeleccionarCategoriaPadreScreenState createState() =>
@@ -128,7 +130,10 @@ class _SeleccionarCategoriaPadreScreenState
                     Navigator.pushNamed(
                       context,
                       '/seleccionarCategoriaHijo',
-                      arguments: {'userId': widget.userId},
+                      arguments: {
+                        'userId': widget.userId,
+                        'carreraId': widget.carreraId
+                      },
                     );
                   },
             child: const Text(

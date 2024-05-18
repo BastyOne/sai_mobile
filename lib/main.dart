@@ -3,15 +3,17 @@ import 'package:provider/provider.dart';
 import 'services/shared_preferences.dart';
 import 'controllers/mensaje_diario_controller.dart';
 import 'controllers/incidencia_controller.dart';
-import 'views/faq_alumno_view.dart';
-import 'views/foro_alumno_view.dart';
+import 'views/Alumno/FAQsViewsAlumno/faq_alumno_view.dart';
+import 'views/Alumno/foroAlumno/foro_alumno_view.dart';
+import 'views/Alumno/incidenciasViewsAlumnos/incidencias_status_view.dart';
+import 'views/Personal/incidenciasViewsPersonal/ver_incidencias_view.dart';
 import 'views/login_view.dart';
-import 'views/home_personal_view.dart';
-import 'views/home_alumno_view.dart';
-import 'views/preguntas_alumno_view.dart';
-import 'views/incidenciasViews/seleccionar_categoria_view.dart';
-import 'views/incidenciasViews/seleccionar_subcategoria_view.dart';
-import 'views/incidenciasViews/agregar_descripcion_view.dart';
+import 'views/Personal/home_personal_view.dart';
+import 'views/Alumno/home_alumno_view.dart';
+import 'views/Alumno/preguntasAlumno/preguntas_alumno_view.dart';
+import 'views/Alumno/incidenciasViewsAlumnos/seleccionar_categoria_view.dart';
+import 'views/Alumno/incidenciasViewsAlumnos/seleccionar_subcategoria_view.dart';
+import 'views/Alumno/incidenciasViewsAlumnos/agregar_descripcion_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,42 +36,54 @@ class MyApp extends StatelessWidget {
         initialRoute: '/',
         routes: {
           '/': (context) => const LoginView(),
-          '/home_personal': (context) => const HomePersonalView(),
-          '/ingresarIncidencia': (context) {
-            final args = ModalRoute.of(context)!.settings.arguments
-                as Map<String, dynamic>;
-            return SeleccionarCategoriaPadreScreen(userId: args['userId']);
-          },
+          '/home_personal': (context) => HomePersonalView(
+              userId: (ModalRoute.of(context)?.settings.arguments
+                  as Map<String, dynamic>)['userId'] as int),
           '/ingresarPregunta': (context) => const IngresarPreguntaScreen(),
           '/preguntasFrecuentes': (context) =>
               const PreguntasFrecuentesScreen(),
           '/foroEstudiantil': (context) => const ForoEstudiantilScreen(),
+          '/incidencias': (context) => const IncidenciaStatusScreen(),
+          '/incidenciasPersonal': (context) => const VerIncidenciasScreen()
         },
         onGenerateRoute: (settings) {
           if (settings.name == '/home_alumno') {
             final args = settings.arguments as Map<String, dynamic>;
-            if (args['userId'] is int) {
+            if (args['userId'] is int && args['carreraId'] is int) {
               return MaterialPageRoute(
                 builder: (context) {
-                  return HomeAlumnoView(userId: args['userId']);
+                  return HomeAlumnoView(
+                      userId: args['userId'], carreraId: args['carreraId']);
+                },
+              );
+            }
+          } else if (settings.name == '/ingresarIncidencia') {
+            final args = settings.arguments as Map<String, dynamic>;
+            if (args['userId'] is int && args['carreraId'] is int) {
+              return MaterialPageRoute(
+                builder: (context) {
+                  return SeleccionarCategoriaPadreScreen(
+                      userId: args['userId'], carreraId: args['carreraId']);
                 },
               );
             }
           } else if (settings.name == '/seleccionarCategoriaHijo') {
             final args = settings.arguments as Map<String, dynamic>;
-            if (args['userId'] is int) {
+            if (args['userId'] is int && args['carreraId'] is int) {
               return MaterialPageRoute(
                 builder: (context) {
-                  return SeleccionarCategoriaHijoScreen(userId: args['userId']);
+                  return SeleccionarCategoriaHijoScreen(
+                      userId: args['userId'], carreraId: args['carreraId']);
                 },
               );
             }
           } else if (settings.name == '/agregarDescripcion') {
             final args = settings.arguments as Map<String, dynamic>;
-            if (args['userId'] is int) {
+            if (args['userId'] is int && args['carreraId'] is int) {
               return MaterialPageRoute(
                 builder: (context) {
-                  return AgregarDescripcionScreen(userId: args['userId']);
+                  return AgregarDescripcionScreen(
+                      userId: args['userId'], carreraId: args['carreraId']);
                 },
               );
             }

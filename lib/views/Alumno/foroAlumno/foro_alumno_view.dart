@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import '../services/shared_preferences.dart';
-import '../widgets/custom_app_bar.dart';
-import '../widgets/custom_drawer.dart';
+import '../../../services/shared_preferences.dart';
+import '../../../widgets/custom_app_bar.dart';
+import '../../../widgets/custom_drawer.dart';
 
-class IngresarPreguntaScreen extends StatelessWidget {
-  const IngresarPreguntaScreen({super.key});
+class ForoEstudiantilScreen extends StatelessWidget {
+  const ForoEstudiantilScreen({super.key});
 
   void _logout(BuildContext context) async {
     await SharedPreferencesService.removeToken();
@@ -25,7 +25,7 @@ class IngresarPreguntaScreen extends StatelessWidget {
         onLogout: () => _logout(context),
       ),
       body: const Center(
-        child: Text("Ingresar Pregunta"),
+        child: Text("Foro Estudiantil"),
       ),
     );
   }
