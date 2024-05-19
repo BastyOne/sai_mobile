@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'models/incidencia.dart';
 import 'services/shared_preferences.dart';
 import 'controllers/mensaje_diario_controller.dart';
 import 'controllers/incidencia_controller.dart';
 import 'views/Alumno/FAQsViewsAlumno/faq_alumno_view.dart';
 import 'views/Alumno/foroAlumno/foro_alumno_view.dart';
 import 'views/Alumno/incidenciasViewsAlumnos/incidencias_status_view.dart';
+import 'views/Alumno/incidenciasViewsAlumnos/chat_incidencia_view.dart'; // Importar la nueva pantalla
+import 'views/Personal/estadisticasViewPersonal/stats_view.dart';
 import 'views/Personal/incidenciasViewsPersonal/ver_incidencias_view.dart';
 import 'views/login_view.dart';
 import 'views/Personal/home_personal_view.dart';
@@ -43,8 +46,8 @@ class MyApp extends StatelessWidget {
           '/preguntasFrecuentes': (context) =>
               const PreguntasFrecuentesScreen(),
           '/foroEstudiantil': (context) => const ForoEstudiantilScreen(),
-          '/incidencias': (context) => const IncidenciaStatusScreen(),
-          '/incidenciasPersonal': (context) => const VerIncidenciasScreen()
+          '/incidenciasPersonal': (context) => const VerIncidenciasScreen(),
+          '/estadisticasPersonal': (context) => const VerEstadisticasScreen(),
         },
         onGenerateRoute: (settings) {
           if (settings.name == '/home_alumno') {
@@ -84,6 +87,28 @@ class MyApp extends StatelessWidget {
                 builder: (context) {
                   return AgregarDescripcionScreen(
                       userId: args['userId'], carreraId: args['carreraId']);
+                },
+              );
+            }
+          } else if (settings.name == '/incidencias') {
+            final args = settings.arguments as Map<String, dynamic>;
+            if (args['userId'] is int) {
+              return MaterialPageRoute(
+                builder: (context) {
+                  return IncidenciaStatusScreen(
+                    userId: args['userId'],
+                  );
+                },
+              );
+            }
+          } else if (settings.name == '/chatIncidencia') {
+            final args = settings.arguments as Map<String, dynamic>;
+            if (args['incidencia'] is Incidencia) {
+              return MaterialPageRoute(
+                builder: (context) {
+                  return ChatIncidenciaScreen(
+                    incidencia: args['incidencia'],
+                  );
                 },
               );
             }

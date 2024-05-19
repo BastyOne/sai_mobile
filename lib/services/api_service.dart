@@ -1,6 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io';
+import '../models/incidencia.dart';
 import '../models/mensaje_diario.dart';
 import '../models/personal.dart';
 import '../models/user.dart';
@@ -197,6 +198,50 @@ class ApiService {
     if (response.statusCode != 201) {
       throw Exception(
           'Failed to create incidencia. Status code: ${response.statusCode}');
+    }
+  }
+
+  Future<List<Incidencia>> fetchIncidenciasPorAlumno(int userId) async {
+    String? token = await storage.read(key: 'token');
+    if (token == null) throw Exception('No token found in storage');
+
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/incidencia/porAlumno/$userId'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> incidenciasJson = json.decode(response.body);
+      return incidenciasJson.map((json) => Incidencia.fromJson(json)).toList();
+    } else {
+      throw Exception(
+          'Failed to load incidencias. Status code: ${response.statusCode}');
+    }
+  }
+
+  Future<void> addRespuestaIncidencia(
+      int incidenciaId, String contenido) async {
+    String? token = await storage.read(key: 'token');
+    if (token == null) throw Exception('No token found in storage');
+
+    final response = await http.post(
+      Uri.parse('$baseUrl/api/incidencia/responder'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: json.encode({
+        'incidencia_id': incidenciaId,
+        'contenido': contenido,
+      }),
+    );
+
+    if (response.statusCode != 201) {
+      throw Exception(
+          'Failed to add respuesta. Status code: ${response.statusCode}');
     }
   }
 

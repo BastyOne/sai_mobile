@@ -178,7 +178,9 @@ class _HomeAlumnoViewState extends State<HomeAlumnoView> {
           Navigator.pushNamed(context, '/foroEstudiantil');
         }),
         customButton('Estado Incidencias', Icons.task, '#81D4FA', () {
-          Navigator.pushNamed(context, '/incidencias');
+          Navigator.pushNamed(context, '/incidencias', arguments: {
+            'userId': widget.userId,
+          });
         }),
       ],
     );

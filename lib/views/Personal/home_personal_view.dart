@@ -159,17 +159,11 @@ class _HomePersonalViewState extends State<HomePersonalView> {
         customButton('Incidencias', Icons.note, '#2196f3', () {
           Navigator.pushNamed(context, '/incidenciasPersonal');
         }),
-        customButton('Ingresar Pregunta', Icons.question_answer, '#03A9F4', () {
-          Navigator.pushNamed(context, '/ingresarPregunta');
-        }),
         customButton('Preguntas Frecuentes', Icons.help, '#29B6F6', () {
           Navigator.pushNamed(context, '/preguntasFrecuentes');
         }),
-        customButton('Foro Estudiantil', Icons.edit, '#4FC3F7', () {
-          Navigator.pushNamed(context, '/foroEstudiantil');
-        }),
-        customButton('Estado Incidencias', Icons.task, '#81D4FA', () {
-          Navigator.pushNamed(context, '/incidencias');
+        customButton('Estadísticas', Icons.bar_chart, '#4FC3F7', () {
+          Navigator.pushNamed(context, '/estadisticasPersonal');
         }),
       ],
     );
@@ -181,8 +175,10 @@ class _HomePersonalViewState extends State<HomePersonalView> {
       style: ElevatedButton.styleFrom(
         backgroundColor:
             Color(int.parse(color.substring(1, 7), radix: 16) + 0xFF000000),
-        minimumSize: const Size(double.infinity, 60),
-        padding: const EdgeInsets.symmetric(vertical: 10),
+        minimumSize:
+            const Size(double.infinity, 80), // Aumenta el tamaño mínimo
+        padding: const EdgeInsets.symmetric(
+            vertical: 20), // Aumenta el padding vertical
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.zero,
         ),
@@ -192,8 +188,12 @@ class _HomePersonalViewState extends State<HomePersonalView> {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Icon(icon, color: Colors.white),
-          Text(text, style: const TextStyle(color: Colors.white)),
+          Icon(icon,
+              color: Colors.white, size: 32), // Aumenta el tamaño del ícono
+          Text(text,
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18)), // Aumenta el tamaño del texto
         ],
       ),
     );
