@@ -9,6 +9,8 @@ import '../models/alumno.dart';
 import '../models/faq.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import 'shared_preferences.dart';
+
 class ApiService {
   final String baseUrl = 'http://192.168.100.81:3000';
   final storage = const FlutterSecureStorage();
@@ -23,6 +25,8 @@ class ApiService {
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       await storage.write(key: 'token', value: data['token']);
+      await SharedPreferencesService.setUserType(data['userType']);
+      await SharedPreferencesService.setUserId(data['userId']);
       return User.fromJson({
         'token': data['token'],
         'userId': data['userId'],
@@ -222,9 +226,9 @@ class ApiService {
     }
   }
 
-  Future<void> addRespuestaIncidencia(
-      int incidenciaId, String contenido) async {
-    String? token = await storage.read(key: 'token');
+  Future<void> addRespuestaIncidencia(int incidenciaId, String contenido,
+      String remitenteTipo, int remitenteId) async {
+    String? token = await SharedPreferencesService.getToken();
     if (token == null) throw Exception('No token found in storage');
 
     final response = await http.post(
@@ -236,6 +240,8 @@ class ApiService {
       body: json.encode({
         'incidencia_id': incidenciaId,
         'contenido': contenido,
+        'remitente_tipo': remitenteTipo,
+        'remitente_id': remitenteId,
       }),
     );
 

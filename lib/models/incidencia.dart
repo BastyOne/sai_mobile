@@ -79,14 +79,16 @@ class Incidencia {
 class RespuestaIncidencia {
   final int id;
   final int incidenciaId;
-  final int? personalId; // Permitir valores nulos para personalId
+  final int remitenteId;
+  final String remitenteTipo; // 'alumno' o 'personal'
   final String contenido;
   final DateTime fechaRespuesta;
 
   RespuestaIncidencia({
     required this.id,
     required this.incidenciaId,
-    required this.personalId,
+    required this.remitenteId,
+    required this.remitenteTipo,
     required this.contenido,
     required this.fechaRespuesta,
   });
@@ -95,7 +97,8 @@ class RespuestaIncidencia {
     return RespuestaIncidencia(
       id: json['id'],
       incidenciaId: json['incidencia_id'],
-      personalId: json['personal_id'],
+      remitenteId: json['remitente_id'],
+      remitenteTipo: json['remitente_tipo'],
       contenido: json['contenido'],
       fechaRespuesta: DateTime.parse(json['fecharespuesta']),
     );
@@ -105,7 +108,8 @@ class RespuestaIncidencia {
     return {
       'id': id,
       'incidencia_id': incidenciaId,
-      'personal_id': personalId,
+      'remitente_id': remitenteId,
+      'remitente_tipo': remitenteTipo,
       'contenido': contenido,
       'fecharespuesta': fechaRespuesta.toIso8601String(),
     };

@@ -6,7 +6,7 @@ import '../models/incidencia.dart';
 class IncidenciaController with ChangeNotifier {
   final ApiService apiService = ApiService();
   List<Incidencia> _incidencias = [];
-  Map<int, String> _categorias = {}; // Almacenar categorías
+  final Map<int, String> _categorias = {}; // Almacenar categorías
   int? _selectedCategoriaPadre;
   int? _selectedCategoriaHijo;
   int? _selectedPersonal;
@@ -61,20 +61,20 @@ class IncidenciaController with ChangeNotifier {
       // Cargar categorías padre
       List<Map<String, dynamic>> categoriasPadreData =
           await apiService.fetchCategoriasPadre();
-      categoriasPadreData.forEach((categoria) {
+      for (var categoria in categoriasPadreData) {
         // Añadir log
         _categorias[categoria['id']] = categoria['nombre'];
-      });
+      }
 
       // Cargar categorías hijo
       for (var categoriaPadre in categoriasPadreData) {
         int padreId = categoriaPadre['id'];
         List<Map<String, dynamic>> categoriasHijoData =
             await apiService.fetchCategoriasHijo(padreId);
-        categoriasHijoData.forEach((categoria) {
+        for (var categoria in categoriasHijoData) {
           // Añadir log
           _categorias[categoria['id']] = categoria['nombre'];
-        });
+        }
       }
 
       notifyListeners();
@@ -114,26 +114,28 @@ class IncidenciaController with ChangeNotifier {
       print("Fetching incidencias for alumnoId: $alumnoId");
       _incidencias = await apiService.fetchIncidenciasPorAlumno(alumnoId);
       print("Fetched incidencias: $_incidencias");
-      _incidencias.forEach((incidencia) {
+      for (var incidencia in _incidencias) {
         print(
             "Incidencia: ${incidencia.descripcion}, Categoria ID: ${incidencia.categoriaIncidenciaId}");
-      });
+      }
       notifyListeners();
     } catch (e) {
       print("Error fetching incidencias: $e");
     }
   }
 
-  Future<void> addMensajeIncidencia(int incidenciaId, String contenido) async {
+  Future<void> addMensajeIncidencia(int incidenciaId, String contenido,
+      String remitenteTipo, int remitenteId) async {
     try {
-      await apiService.addRespuestaIncidencia(incidenciaId, contenido);
-      // Re-fetch incidencias after adding a message
+      await apiService.addRespuestaIncidencia(
+          incidenciaId, contenido, remitenteTipo, remitenteId);
       final incidencia = _incidencias.firstWhere((i) => i.id == incidenciaId);
       incidencia.respuestas.add(
         RespuestaIncidencia(
-          id: 0, // Assuming ID is auto-generated and can be any placeholder here
+          id: 0,
           incidenciaId: incidenciaId,
-          personalId: 0, // Assuming 0 indicates it's from the student
+          remitenteId: remitenteId,
+          remitenteTipo: remitenteTipo,
           contenido: contenido,
           fechaRespuesta: DateTime.now(),
         ),
