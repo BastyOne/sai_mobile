@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Importar el paquete intl
+import 'package:intl/intl.dart';
 import '../../../models/incidencia.dart';
 
-class IncidenciaItem extends StatelessWidget {
+class IncidenciaItemPersonal extends StatelessWidget {
   final Incidencia incidencia;
-  final Map<int, String> categorias; // Recibir categorías
+  final Map<int, String> categorias;
 
-  const IncidenciaItem(
-      {super.key, required this.incidencia, required this.categorias});
+  const IncidenciaItemPersonal({
+    super.key,
+    required this.incidencia,
+    required this.categorias,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +38,6 @@ class IncidenciaItem extends StatelessWidget {
       }
     }
 
-    // Formatear la fecha para mostrar solo la parte de la fecha
     String formattedDate =
         DateFormat('yyyy-MM-dd').format(incidencia.fechaHoraCreacion);
 
@@ -48,7 +50,6 @@ class IncidenciaItem extends StatelessWidget {
         color: Colors.white,
       ),
       child: IntrinsicHeight(
-        // Asegura que el contenedor tenga una altura basada en su contenido
         child: Row(
           children: [
             Container(

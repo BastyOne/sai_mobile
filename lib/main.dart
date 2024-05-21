@@ -9,6 +9,7 @@ import 'views/Alumno/foroAlumno/foro_alumno_view.dart';
 import 'views/Alumno/incidenciasViewsAlumnos/incidencias_status_view.dart';
 import 'views/Alumno/incidenciasViewsAlumnos/chat_incidencia_view.dart'; // Importar la nueva pantalla
 import 'views/Personal/estadisticasViewPersonal/stats_view.dart';
+import 'views/Personal/incidenciasViewsPersonal/chat_incidencia_personal_view.dart';
 import 'views/Personal/incidenciasViewsPersonal/ver_incidencias_view.dart';
 import 'views/login_view.dart';
 import 'views/Personal/home_personal_view.dart';
@@ -46,7 +47,9 @@ class MyApp extends StatelessWidget {
           '/preguntasFrecuentes': (context) =>
               const PreguntasFrecuentesScreen(),
           '/foroEstudiantil': (context) => const ForoEstudiantilScreen(),
-          '/incidenciasPersonal': (context) => const VerIncidenciasScreen(),
+          '/incidenciasPersonal': (context) => VerIncidenciasScreen(
+              personalId: (ModalRoute.of(context)?.settings.arguments
+                  as Map<String, dynamic>)['userId'] as int),
           '/estadisticasPersonal': (context) => const VerEstadisticasScreen(),
         },
         onGenerateRoute: (settings) {
@@ -107,6 +110,17 @@ class MyApp extends StatelessWidget {
               return MaterialPageRoute(
                 builder: (context) {
                   return ChatIncidenciaScreen(
+                    incidencia: args['incidencia'],
+                  );
+                },
+              );
+            }
+          } else if (settings.name == '/chatIncidenciaPersonal') {
+            final args = settings.arguments as Map<String, dynamic>;
+            if (args['incidencia'] is Incidencia) {
+              return MaterialPageRoute(
+                builder: (context) {
+                  return ChatIncidenciaPersonalScreen(
                     incidencia: args['incidencia'],
                   );
                 },

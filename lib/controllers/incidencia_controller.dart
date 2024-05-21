@@ -124,6 +124,25 @@ class IncidenciaController with ChangeNotifier {
     }
   }
 
+  Future<void> fetchIncidenciasPorPersonal(int personalId) async {
+    try {
+      print("Fetching incidencias for personalId: $personalId");
+      _incidencias = await apiService.fetchIncidenciasPorPersonal(personalId);
+      print("Fetched incidencias: $_incidencias");
+      for (var incidencia in _incidencias) {
+        print(
+            "Incidencia: ${incidencia.descripcion}, Categoria ID: ${incidencia.categoriaIncidenciaId}");
+        for (var respuesta in incidencia.respuestas) {
+          print(
+              "Respuesta: ${respuesta.contenido}, Remitente Tipo: ${respuesta.remitenteTipo}");
+        }
+      }
+      notifyListeners();
+    } catch (e) {
+      print("Error fetching incidencias: $e");
+    }
+  }
+
   Future<void> addMensajeIncidencia(int incidenciaId, String contenido,
       String remitenteTipo, int remitenteId) async {
     try {

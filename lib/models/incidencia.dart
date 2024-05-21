@@ -1,17 +1,20 @@
+import 'archivo.dart';
+
 class Incidencia {
   final int id;
   final int alumnoId;
   final int categoriaIncidenciaId;
   final String descripcion;
   final int personalId;
-  final int? carreraId; // Permitir null
+  final int? carreraId;
   final String estado;
   final DateTime fechaHoraCreacion;
-  final DateTime? fechaHoraCierre; // Permitir null
+  final DateTime? fechaHoraCierre;
   final bool reabierta;
-  final String? prioridad; // Permitir null
+  final String? prioridad;
   final List<RespuestaIncidencia> respuestas;
-  final List<Reunion> reuniones; // Añadir reuniones
+  final List<Reunion> reuniones;
+  final List<Archivo> archivos;
 
   Incidencia({
     required this.id,
@@ -19,14 +22,15 @@ class Incidencia {
     required this.categoriaIncidenciaId,
     required this.descripcion,
     required this.personalId,
-    this.carreraId, // Permitir null
+    this.carreraId,
     required this.estado,
     required this.fechaHoraCreacion,
-    this.fechaHoraCierre, // Permitir null
+    this.fechaHoraCierre,
     required this.reabierta,
-    this.prioridad, // Permitir null
+    this.prioridad,
     required this.respuestas,
-    required this.reuniones, // Añadir reuniones
+    required this.reuniones,
+    required this.archivos,
   });
 
   factory Incidencia.fromJson(Map<String, dynamic> json) {
@@ -36,24 +40,25 @@ class Incidencia {
       categoriaIncidenciaId: json['categoriaincidencia_id'] as int,
       descripcion: json['descripcion'] as String,
       personalId: json['personal_id'] as int,
-      carreraId: json['carrera_id'] != null
-          ? json['carrera_id'] as int
-          : null, // Permitir null
+      carreraId: json['carrera_id'] != null ? json['carrera_id'] as int : null,
       estado: json['estado'] as String,
       fechaHoraCreacion: DateTime.parse(json['fechahoracreacion'] as String),
       fechaHoraCierre: json['fechahoracierre'] != null
           ? DateTime.parse(json['fechahoracierre'] as String)
-          : null, // Permitir null
+          : null,
       reabierta: json['reabierta'] as bool,
-      prioridad: json['prioridad'] != null
-          ? json['prioridad'] as String
-          : null, // Permitir null
-      respuestas: (json['respuestaincidencia'] as List)
-          .map((i) => RespuestaIncidencia.fromJson(i as Map<String, dynamic>))
-          .toList(),
-      reuniones: (json['reunion'] as List)
-          .map((i) => Reunion.fromJson(i as Map<String, dynamic>))
-          .toList(),
+      prioridad: json['prioridad'] != null ? json['prioridad'] as String : null,
+      respuestas: json['respuestaincidencia'] != null
+          ? (json['respuestaincidencia'] as List)
+              .map((i) => RespuestaIncidencia.fromJson(i))
+              .toList()
+          : [],
+      reuniones: json['reunion'] != null
+          ? (json['reunion'] as List).map((i) => Reunion.fromJson(i)).toList()
+          : [],
+      archivos: json['archivos'] != null
+          ? (json['archivos'] as List).map((i) => Archivo.fromJson(i)).toList()
+          : [],
     );
   }
 
@@ -64,14 +69,15 @@ class Incidencia {
       'categoriaincidencia_id': categoriaIncidenciaId,
       'descripcion': descripcion,
       'personal_id': personalId,
-      'carrera_id': carreraId, // Permitir null
+      'carrera_id': carreraId,
       'estado': estado,
       'fechahoracreacion': fechaHoraCreacion.toIso8601String(),
-      'fechahoracierre': fechaHoraCierre?.toIso8601String(), // Permitir null
+      'fechahoracierre': fechaHoraCierre?.toIso8601String(),
       'reabierta': reabierta,
-      'prioridad': prioridad, // Permitir null
+      'prioridad': prioridad,
       'respuestaincidencia': respuestas.map((r) => r.toJson()).toList(),
-      'reunion': reuniones.map((r) => r.toJson()).toList(), // Añadir reuniones
+      'reunion': reuniones.map((r) => r.toJson()).toList(),
+      'archivos': archivos.map((a) => a.toJson()).toList(),
     };
   }
 }

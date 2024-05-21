@@ -226,6 +226,36 @@ class ApiService {
     }
   }
 
+  Future<List<Incidencia>> fetchIncidenciasPorPersonal(int userId) async {
+    String? token = await storage.read(key: 'token');
+    if (token == null) throw Exception('No token found in storage');
+
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/incidencia/porPersonal/$userId'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    print('Response status code: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      var body = json.decode(response.body);
+      print('Decoded body: $body');
+      if (body is List) {
+        return body.map((json) => Incidencia.fromJson(json)).toList();
+      } else {
+        print('Unexpected response format: $body');
+        throw Exception('Unexpected response format: $body');
+      }
+    } else {
+      throw Exception(
+          'Failed to load incidencias. Status code: ${response.statusCode}');
+    }
+  }
+
   Future<void> addRespuestaIncidencia(int incidenciaId, String contenido,
       String remitenteTipo, int remitenteId) async {
     String? token = await SharedPreferencesService.getToken();

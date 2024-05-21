@@ -7,10 +7,10 @@ import '../../../services/shared_preferences.dart';
 import '../../../widgets/custom_app_bar.dart';
 import '../../../widgets/custom_drawer.dart';
 
-class ChatIncidenciaScreen extends StatelessWidget {
+class ChatIncidenciaPersonalScreen extends StatelessWidget {
   final Incidencia incidencia;
 
-  const ChatIncidenciaScreen({super.key, required this.incidencia});
+  const ChatIncidenciaPersonalScreen({super.key, required this.incidencia});
 
   @override
   Widget build(BuildContext context) {
@@ -40,12 +40,12 @@ class ChatIncidenciaScreen extends StatelessWidget {
                   itemBuilder: (context, index) {
                     if (index == 0) {
                       return Align(
-                        alignment: Alignment.centerRight,
+                        alignment: Alignment.centerLeft,
                         child: Container(
                           margin: const EdgeInsets.symmetric(vertical: 4.0),
                           padding: const EdgeInsets.all(10.0),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF0575E6),
+                            color: Colors.grey[200],
                             borderRadius: BorderRadius.circular(8.0),
                           ),
                           child: Column(
@@ -53,14 +53,14 @@ class ChatIncidenciaScreen extends StatelessWidget {
                             children: [
                               Text(
                                 updatedIncidencia.descripcion,
-                                style: const TextStyle(color: Colors.white),
+                                style: const TextStyle(color: Colors.black),
                               ),
                               const SizedBox(height: 5),
                               Text(
                                 DateFormat('yyyy-MM-dd HH:mm').format(
                                     updatedIncidencia.fechaHoraCreacion),
                                 style: const TextStyle(
-                                  color: Colors.white70,
+                                  color: Colors.black54,
                                   fontSize: 10,
                                 ),
                               ),
@@ -70,17 +70,17 @@ class ChatIncidenciaScreen extends StatelessWidget {
                       );
                     } else {
                       var respuesta = updatedIncidencia.respuestas[index - 1];
-                      bool isAlumno = respuesta.remitenteTipo == 'alumno';
+                      bool isPersonal = respuesta.remitenteTipo == 'personal';
 
                       return Align(
-                        alignment: isAlumno
+                        alignment: isPersonal
                             ? Alignment.centerRight
                             : Alignment.centerLeft,
                         child: Container(
                           margin: const EdgeInsets.symmetric(vertical: 4.0),
                           padding: const EdgeInsets.all(10.0),
                           decoration: BoxDecoration(
-                            color: isAlumno
+                            color: isPersonal
                                 ? const Color(0xFF0575E6)
                                 : Colors.grey[200],
                             borderRadius: BorderRadius.circular(8.0),
@@ -91,7 +91,8 @@ class ChatIncidenciaScreen extends StatelessWidget {
                               Text(
                                 respuesta.contenido,
                                 style: TextStyle(
-                                  color: isAlumno ? Colors.white : Colors.black,
+                                  color:
+                                      isPersonal ? Colors.white : Colors.black,
                                 ),
                               ),
                               const SizedBox(height: 5),
@@ -99,7 +100,7 @@ class ChatIncidenciaScreen extends StatelessWidget {
                                 DateFormat('HH:mm')
                                     .format(respuesta.fechaRespuesta),
                                 style: TextStyle(
-                                  color: isAlumno
+                                  color: isPersonal
                                       ? Colors.white70
                                       : Colors.black54,
                                   fontSize: 10,

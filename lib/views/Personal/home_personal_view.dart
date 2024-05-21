@@ -157,7 +157,9 @@ class _HomePersonalViewState extends State<HomePersonalView> {
     return Column(
       children: [
         customButton('Incidencias', Icons.note, '#2196f3', () {
-          Navigator.pushNamed(context, '/incidenciasPersonal');
+          Navigator.pushNamed(context, '/incidenciasPersonal', arguments: {
+            'userId': widget.userId,
+          });
         }),
         customButton('Preguntas Frecuentes', Icons.help, '#29B6F6', () {
           Navigator.pushNamed(context, '/preguntasFrecuentes');

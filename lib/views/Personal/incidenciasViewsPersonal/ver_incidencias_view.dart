@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../services/shared_preferences.dart';
 import '../../../widgets/custom_app_bar.dart';
 import '../../../widgets/custom_drawer.dart';
+import '../../../controllers/incidencia_controller.dart';
+import '../../../models/incidencia.dart';
+import '../../../widgets/incidencia_item_personal.dart';
 
 class VerIncidenciasScreen extends StatelessWidget {
-  const VerIncidenciasScreen({super.key});
+  final int personalId;
+
+  const VerIncidenciasScreen({super.key, required this.personalId});
 
   void _logout(BuildContext context) async {
     await SharedPreferencesService.removeToken();
@@ -24,8 +30,53 @@ class VerIncidenciasScreen extends StatelessWidget {
       drawer: CustomDrawer(
         onLogout: () => _logout(context),
       ),
-      body: const Center(
-        child: Text("Incidencias"),
+      body: FutureBuilder(
+        future: Future.wait([
+          Provider.of<IncidenciaController>(context, listen: false)
+              .fetchIncidenciasPorPersonal(personalId),
+          Provider.of<IncidenciaController>(context, listen: false)
+              .fetchCategorias(),
+        ]),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text("Error: ${snapshot.error}"));
+          } else {
+            return Consumer<IncidenciaController>(
+              builder: (context, controller, child) {
+                if (controller.incidencias.isEmpty) {
+                  return const Center(
+                    child: Text("No hay incidencias registradas."),
+                  );
+                } else {
+                  return ListView.builder(
+                    padding: const EdgeInsets.all(8.0),
+                    itemCount: controller.incidencias.length,
+                    itemBuilder: (context, index) {
+                      Incidencia incidencia = controller.incidencias[index];
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            '/chatIncidenciaPersonal',
+                            arguments: {
+                              'incidencia': incidencia,
+                            },
+                          );
+                        },
+                        child: IncidenciaItemPersonal(
+                          incidencia: incidencia,
+                          categorias: controller.categorias,
+                        ),
+                      );
+                    },
+                  );
+                }
+              },
+            );
+          }
+        },
       ),
     );
   }
