@@ -39,8 +39,6 @@ class IncidenciaStatusScreen extends StatelessWidget {
           } else {
             return Consumer<IncidenciaController>(
               builder: (context, controller, child) {
-                print(
-                    "Categorías cargadas: ${controller.categorias}"); // Añadir log
                 if (controller.incidencias.isEmpty) {
                   return const Center(
                     child: Text("No hay incidencias registradas."),
@@ -51,8 +49,6 @@ class IncidenciaStatusScreen extends StatelessWidget {
                     itemCount: controller.incidencias.length,
                     itemBuilder: (context, index) {
                       Incidencia incidencia = controller.incidencias[index];
-                      print(
-                          "Mostrando incidencia: ${incidencia.descripcion}, Categoria ID: ${incidencia.categoriaIncidenciaId}"); // Añadir log
                       return GestureDetector(
                         onTap: () {
                           Navigator.pushNamed(

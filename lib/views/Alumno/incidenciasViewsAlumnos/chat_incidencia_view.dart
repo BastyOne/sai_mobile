@@ -124,7 +124,7 @@ class ChatIncidenciaScreen extends StatelessWidget {
   Widget _buildMessageInput(BuildContext context,
       TextEditingController controller, Incidencia updatedIncidencia) {
     return Container(
-      color: const Color.fromARGB(255, 173, 171, 171),
+      color: const Color.fromARGB(255, 255, 255, 255),
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
       child: Row(
         children: [

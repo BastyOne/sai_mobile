@@ -1,4 +1,5 @@
 import 'archivo.dart';
+import 'alumno.dart';
 
 class Incidencia {
   final int id;
@@ -15,6 +16,7 @@ class Incidencia {
   final List<RespuestaIncidencia> respuestas;
   final List<Reunion> reuniones;
   final List<Archivo> archivos;
+  final AlumnoInfo? alumno; // Agregar propiedad alumno
 
   Incidencia({
     required this.id,
@@ -31,6 +33,7 @@ class Incidencia {
     required this.respuestas,
     required this.reuniones,
     required this.archivos,
+    this.alumno, // Agregar al constructor
   });
 
   factory Incidencia.fromJson(Map<String, dynamic> json) {
@@ -59,6 +62,9 @@ class Incidencia {
       archivos: json['archivos'] != null
           ? (json['archivos'] as List).map((i) => Archivo.fromJson(i)).toList()
           : [],
+      alumno: json['alumno'] != null
+          ? AlumnoInfo.fromJson(json['alumno'])
+          : null, // Asegurarse de manejar esto
     );
   }
 
@@ -78,6 +84,7 @@ class Incidencia {
       'respuestaincidencia': respuestas.map((r) => r.toJson()).toList(),
       'reunion': reuniones.map((r) => r.toJson()).toList(),
       'archivos': archivos.map((a) => a.toJson()).toList(),
+      'alumno': alumno?.toJson(), // Asegurarse de manejar esto
     };
   }
 }

@@ -238,16 +238,11 @@ class ApiService {
       },
     );
 
-    print('Response status code: ${response.statusCode}');
-    print('Response body: ${response.body}');
-
     if (response.statusCode == 200) {
       var body = json.decode(response.body);
-      print('Decoded body: $body');
       if (body is List) {
         return body.map((json) => Incidencia.fromJson(json)).toList();
       } else {
-        print('Unexpected response format: $body');
         throw Exception('Unexpected response format: $body');
       }
     } else {

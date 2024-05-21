@@ -24,4 +24,14 @@ class AlumnoInfo {
       fotoUrl: json['foto'],
     );
   }
+  Map<String, dynamic> toJson() {
+    return {
+      'nombre': nombre,
+      'apellido': apellido,
+      'rut': rut,
+      'email': email,
+      'carreraNombre': carreraNombre,
+      'fotoUrl': fotoUrl,
+    };
+  }
 }

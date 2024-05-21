@@ -62,7 +62,6 @@ class IncidenciaController with ChangeNotifier {
       List<Map<String, dynamic>> categoriasPadreData =
           await apiService.fetchCategoriasPadre();
       for (var categoria in categoriasPadreData) {
-        // Añadir log
         _categorias[categoria['id']] = categoria['nombre'];
       }
 
@@ -72,14 +71,13 @@ class IncidenciaController with ChangeNotifier {
         List<Map<String, dynamic>> categoriasHijoData =
             await apiService.fetchCategoriasHijo(padreId);
         for (var categoria in categoriasHijoData) {
-          // Añadir log
           _categorias[categoria['id']] = categoria['nombre'];
         }
       }
 
       notifyListeners();
     } catch (e) {
-      print("Error fetching categorias: $e");
+      // Error handling
     }
   }
 
@@ -111,35 +109,19 @@ class IncidenciaController with ChangeNotifier {
 
   Future<void> fetchIncidenciasPorAlumno(int alumnoId) async {
     try {
-      print("Fetching incidencias for alumnoId: $alumnoId");
       _incidencias = await apiService.fetchIncidenciasPorAlumno(alumnoId);
-      print("Fetched incidencias: $_incidencias");
-      for (var incidencia in _incidencias) {
-        print(
-            "Incidencia: ${incidencia.descripcion}, Categoria ID: ${incidencia.categoriaIncidenciaId}");
-      }
       notifyListeners();
     } catch (e) {
-      print("Error fetching incidencias: $e");
+      // Error handling
     }
   }
 
   Future<void> fetchIncidenciasPorPersonal(int personalId) async {
     try {
-      print("Fetching incidencias for personalId: $personalId");
       _incidencias = await apiService.fetchIncidenciasPorPersonal(personalId);
-      print("Fetched incidencias: $_incidencias");
-      for (var incidencia in _incidencias) {
-        print(
-            "Incidencia: ${incidencia.descripcion}, Categoria ID: ${incidencia.categoriaIncidenciaId}");
-        for (var respuesta in incidencia.respuestas) {
-          print(
-              "Respuesta: ${respuesta.contenido}, Remitente Tipo: ${respuesta.remitenteTipo}");
-        }
-      }
       notifyListeners();
     } catch (e) {
-      print("Error fetching incidencias: $e");
+      // Error handling
     }
   }
 
@@ -161,7 +143,7 @@ class IncidenciaController with ChangeNotifier {
       );
       notifyListeners();
     } catch (e) {
-      print("Error adding mensaje: $e");
+      // Error handling
     }
   }
 }
