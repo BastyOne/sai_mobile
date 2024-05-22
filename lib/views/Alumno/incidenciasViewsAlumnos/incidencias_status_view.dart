@@ -39,16 +39,17 @@ class IncidenciaStatusScreen extends StatelessWidget {
           } else {
             return Consumer<IncidenciaController>(
               builder: (context, controller, child) {
-                if (controller.incidencias.isEmpty) {
+                if (controller.incidenciasFiltradas.isEmpty) {
                   return const Center(
                     child: Text("No hay incidencias registradas."),
                   );
                 } else {
                   return ListView.builder(
                     padding: const EdgeInsets.all(8.0),
-                    itemCount: controller.incidencias.length,
+                    itemCount: controller.incidenciasFiltradas.length,
                     itemBuilder: (context, index) {
-                      Incidencia incidencia = controller.incidencias[index];
+                      Incidencia incidencia =
+                          controller.incidenciasFiltradas[index];
                       return GestureDetector(
                         onTap: () {
                           Navigator.pushNamed(
@@ -61,8 +62,7 @@ class IncidenciaStatusScreen extends StatelessWidget {
                         },
                         child: IncidenciaItem(
                           incidencia: incidencia,
-                          categorias: controller
-                              .categorias, // Pasar categorías al widget
+                          categorias: controller.categorias,
                         ),
                       );
                     },

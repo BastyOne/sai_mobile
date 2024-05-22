@@ -1,12 +1,14 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../services/api_service.dart';
 import '../models/incidencia.dart';
 
 class IncidenciaController with ChangeNotifier {
   final ApiService apiService = ApiService();
   List<Incidencia> _incidencias = [];
-  final Map<int, String> _categorias = {}; // Almacenar categorías
+  List<Incidencia> _incidenciasFiltradas = [];
+  final Map<int, String> _categorias = {};
   int? _selectedCategoriaPadre;
   int? _selectedCategoriaHijo;
   int? _selectedPersonal;
@@ -22,6 +24,7 @@ class IncidenciaController with ChangeNotifier {
   String? get prioridad => _prioridad;
   File? get archivo => _archivo;
   List<Incidencia> get incidencias => _incidencias;
+  List<Incidencia> get incidenciasFiltradas => _incidenciasFiltradas;
   Map<int, String> get categorias => _categorias;
 
   // Setters
@@ -55,17 +58,14 @@ class IncidenciaController with ChangeNotifier {
     notifyListeners();
   }
 
-  // Métodos para obtener datos
   Future<void> fetchCategorias() async {
     try {
-      // Cargar categorías padre
       List<Map<String, dynamic>> categoriasPadreData =
           await apiService.fetchCategoriasPadre();
       for (var categoria in categoriasPadreData) {
         _categorias[categoria['id']] = categoria['nombre'];
       }
 
-      // Cargar categorías hijo
       for (var categoriaPadre in categoriasPadreData) {
         int padreId = categoriaPadre['id'];
         List<Map<String, dynamic>> categoriasHijoData =
@@ -93,7 +93,6 @@ class IncidenciaController with ChangeNotifier {
     return await apiService.fetchPersonal();
   }
 
-  // Método para crear incidencia
   Future<void> submitIncidencia(int alumnoId, int carreraId) async {
     final incidenciaData = {
       'alumno_id': alumnoId,
@@ -110,6 +109,8 @@ class IncidenciaController with ChangeNotifier {
   Future<void> fetchIncidenciasPorAlumno(int alumnoId) async {
     try {
       _incidencias = await apiService.fetchIncidenciasPorAlumno(alumnoId);
+      _incidenciasFiltradas = List.from(_incidencias);
+      _ordenarIncidencias();
       notifyListeners();
     } catch (e) {
       // Error handling
@@ -119,6 +120,8 @@ class IncidenciaController with ChangeNotifier {
   Future<void> fetchIncidenciasPorPersonal(int personalId) async {
     try {
       _incidencias = await apiService.fetchIncidenciasPorPersonal(personalId);
+      _incidenciasFiltradas = List.from(_incidencias);
+      _ordenarIncidencias();
       notifyListeners();
     } catch (e) {
       // Error handling
@@ -141,9 +144,47 @@ class IncidenciaController with ChangeNotifier {
           fechaRespuesta: DateTime.now(),
         ),
       );
+      _ordenarIncidencias();
       notifyListeners();
     } catch (e) {
       // Error handling
     }
+  }
+
+  void filtrarIncidencias(
+      String? categoria, String? prioridad, String? estado, DateTime? fecha) {
+    _incidenciasFiltradas = _incidencias.where((incidencia) {
+      final categoriaMatch = categoria == null ||
+          _categorias[incidencia.categoriaIncidenciaId] == categoria;
+      final prioridadMatch =
+          prioridad == null || incidencia.prioridad == prioridad;
+      final estadoMatch = estado == null || incidencia.estado == estado;
+      final fechaMatch = fecha == null ||
+          DateFormat('yyyy-MM-dd').format(incidencia.fechaHoraCreacion) ==
+              DateFormat('yyyy-MM-dd').format(fecha);
+
+      return categoriaMatch && prioridadMatch && estadoMatch && fechaMatch;
+    }).toList();
+
+    _ordenarIncidencias(); // Asegúrate de ordenar después de filtrar
+    notifyListeners();
+  }
+
+  void resetFiltros() {
+    _incidenciasFiltradas = List.from(_incidencias);
+    _ordenarIncidencias(); // Asegúrate de ordenar después de resetear
+    notifyListeners();
+  }
+
+  void _ordenarIncidencias() {
+    _incidenciasFiltradas.sort((a, b) {
+      if (a.estado == 'pendiente' && b.estado != 'pendiente') {
+        return -1;
+      } else if (a.estado != 'pendiente' && b.estado == 'pendiente') {
+        return 1;
+      } else {
+        return b.fechaHoraCreacion.compareTo(a.fechaHoraCreacion);
+      }
+    });
   }
 }
