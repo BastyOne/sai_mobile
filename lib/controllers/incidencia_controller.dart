@@ -163,6 +163,18 @@ class IncidenciaController with ChangeNotifier {
     }
   }
 
+  Future<void> reabrirIncidencia(int incidenciaId) async {
+    try {
+      await apiService.reabrirIncidencia(incidenciaId);
+      final incidencia = _incidencias.firstWhere((i) => i.id == incidenciaId);
+      incidencia.estado = 'pendiente';
+      incidencia.fechaHoraCierre = null;
+      notifyListeners();
+    } catch (e) {
+      // Error handling
+    }
+  }
+
   void filtrarIncidencias(
       String? categoria, String? prioridad, String? estado, DateTime? fecha) {
     _incidenciasFiltradas = _incidencias.where((incidencia) {

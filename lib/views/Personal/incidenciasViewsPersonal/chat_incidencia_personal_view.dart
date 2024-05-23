@@ -9,116 +9,145 @@ import '../../../services/shared_preferences.dart';
 import '../../../widgets/custom_app_bar.dart';
 import '../../../widgets/custom_drawer.dart';
 
-class ChatIncidenciaPersonalScreen extends StatelessWidget {
+class ChatIncidenciaPersonalScreen extends StatefulWidget {
   final Incidencia incidencia;
 
   const ChatIncidenciaPersonalScreen({super.key, required this.incidencia});
 
   @override
+  _ChatIncidenciaPersonalScreenState createState() =>
+      _ChatIncidenciaPersonalScreenState();
+}
+
+class _ChatIncidenciaPersonalScreenState
+    extends State<ChatIncidenciaPersonalScreen> {
+  late TextEditingController _controller;
+  bool incidenciaUpdated = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final controller = TextEditingController();
-
-    return Scaffold(
-      appBar: CustomAppBar(
-        titleWidget: Image.network(
-          'https://portalalumnos.ucm.cl/v2/assets/img/logo_ucm_white.png',
-          width: 160,
+    // ignore: deprecated_member_use
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pop(context, incidenciaUpdated);
+        return false;
+      },
+      child: Scaffold(
+        appBar: CustomAppBar(
+          titleWidget: Image.network(
+            'https://portalalumnos.ucm.cl/v2/assets/img/logo_ucm_white.png',
+            width: 160,
+          ),
         ),
-      ),
-      drawer: CustomDrawer(
-        onLogout: () => _logout(context),
-      ),
-      body: Consumer<IncidenciaController>(
-        builder: (context, incidenciaController, child) {
-          final updatedIncidencia = incidenciaController.incidencias
-              .firstWhere((i) => i.id == incidencia.id);
+        drawer: CustomDrawer(
+          onLogout: () => _logout(context),
+        ),
+        body: Consumer<IncidenciaController>(
+          builder: (context, incidenciaController, child) {
+            final updatedIncidencia = incidenciaController.incidencias
+                .firstWhere((i) => i.id == widget.incidencia.id,
+                    orElse: () => widget.incidencia);
 
-          return Column(
-            children: [
-              Expanded(
-                child: ListView.builder(
-                  padding: const EdgeInsets.all(8.0),
-                  itemCount: updatedIncidencia.respuestas.length +
-                      1, // +1 para incluir la descripción
-                  itemBuilder: (context, index) {
-                    if (index == 0) {
-                      // Mostrar la descripción de la incidencia como el primer mensaje
+            return Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(8.0),
+                    itemCount: updatedIncidencia.respuestas.length +
+                        1, // +1 para incluir la descripción
+                    itemBuilder: (context, index) {
+                      if (index == 0) {
+                        // Mostrar la descripción de la incidencia como el primer mensaje
+                        return Align(
+                          alignment: Alignment.centerLeft,
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(vertical: 4.0),
+                            padding: const EdgeInsets.all(10.0),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[200],
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  updatedIncidencia.descripcion,
+                                  style: const TextStyle(color: Colors.black),
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  DateFormat('HH:mm').format(
+                                      updatedIncidencia.fechaHoraCreacion),
+                                  style: const TextStyle(
+                                      color: Colors.black54, fontSize: 10),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+
+                      var respuesta = updatedIncidencia.respuestas[index - 1];
+                      bool isPersonal = respuesta.remitenteTipo == 'personal';
+
                       return Align(
-                        alignment: Alignment.centerLeft,
+                        alignment: isPersonal
+                            ? Alignment.centerRight
+                            : Alignment.centerLeft,
                         child: Container(
                           margin: const EdgeInsets.symmetric(vertical: 4.0),
                           padding: const EdgeInsets.all(10.0),
                           decoration: BoxDecoration(
-                            color: Colors.grey[200],
+                            color: isPersonal
+                                ? const Color(0xFF0575E6)
+                                : Colors.grey[200],
                             borderRadius: BorderRadius.circular(8.0),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                incidencia.descripcion,
-                                style: TextStyle(color: Colors.black),
+                                respuesta.contenido,
+                                style: TextStyle(
+                                  color:
+                                      isPersonal ? Colors.white : Colors.black,
+                                ),
                               ),
                               const SizedBox(height: 5),
                               Text(
                                 DateFormat('HH:mm')
-                                    .format(incidencia.fechaHoraCreacion),
+                                    .format(respuesta.fechaRespuesta),
                                 style: TextStyle(
-                                    color: Colors.black54, fontSize: 10),
+                                  color: isPersonal
+                                      ? Colors.white70
+                                      : Colors.black54,
+                                  fontSize: 10,
+                                ),
                               ),
                             ],
                           ),
                         ),
                       );
-                    }
-
-                    var respuesta = updatedIncidencia.respuestas[index - 1];
-                    bool isPersonal = respuesta.remitenteTipo == 'personal';
-
-                    return Align(
-                      alignment: isPersonal
-                          ? Alignment.centerRight
-                          : Alignment.centerLeft,
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(vertical: 4.0),
-                        padding: const EdgeInsets.all(10.0),
-                        decoration: BoxDecoration(
-                          color: isPersonal
-                              ? const Color(0xFF0575E6)
-                              : Colors.grey[200],
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              respuesta.contenido,
-                              style: TextStyle(
-                                color: isPersonal ? Colors.white : Colors.black,
-                              ),
-                            ),
-                            const SizedBox(height: 5),
-                            Text(
-                              DateFormat('HH:mm')
-                                  .format(respuesta.fechaRespuesta),
-                              style: TextStyle(
-                                color: isPersonal
-                                    ? Colors.white70
-                                    : Colors.black54,
-                                fontSize: 10,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
+                    },
+                  ),
                 ),
-              ),
-              _buildMessageInput(context, controller, updatedIncidencia),
-            ],
-          );
-        },
+                _buildMessageInput(context, _controller, updatedIncidencia),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -128,7 +157,7 @@ class ChatIncidenciaPersonalScreen extends StatelessWidget {
     bool isIncidenciaCerrada = updatedIncidencia.estado == 'cerrada';
 
     return Container(
-      color: Color.fromARGB(255, 255, 255, 255),
+      color: const Color.fromARGB(255, 255, 255, 255),
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
       child: Row(
         children: [
@@ -169,7 +198,7 @@ class ChatIncidenciaPersonalScreen extends StatelessWidget {
                           await SharedPreferencesService.getUserType();
 
                       if (remitenteId != null && remitenteTipo != null) {
-                        Provider.of<IncidenciaController>(context,
+                        await Provider.of<IncidenciaController>(context,
                                 listen: false)
                             .addMensajeIncidencia(updatedIncidencia.id,
                                 contenido, remitenteTipo, remitenteId);
@@ -282,13 +311,54 @@ class ChatIncidenciaPersonalScreen extends StatelessWidget {
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('Cerrar Incidencia',
-                  style: TextStyle(color: Color(0xFF0575E6))),
+              child: Text(
+                incidencia.estado == 'cerrada'
+                    ? 'Reabrir Incidencia'
+                    : 'Cerrar Incidencia',
+                style: const TextStyle(color: Color(0xFF0575E6)),
+              ),
               onPressed: () async {
-                await Provider.of<IncidenciaController>(context, listen: false)
-                    .cerrarIncidencia(incidencia.id);
-                Navigator.of(context).pop();
+                final incidenciaController =
+                    Provider.of<IncidenciaController>(context, listen: false);
+                if (incidencia.estado == 'cerrada') {
+                  await incidenciaController.reabrirIncidencia(incidencia.id);
+                  incidenciaUpdated = true;
+                  _showSuccessDialog(context, 'Incidencia reabierta con éxito');
+                } else {
+                  await incidenciaController.cerrarIncidencia(incidencia.id);
+                  incidenciaUpdated = true;
+                  _showSuccessDialog(context, 'Incidencia cerrada con éxito');
+                }
               },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showSuccessDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Operación exitosa'),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                  foregroundColor: const Color(0xFF0575E6)),
+              onPressed: () {
+                Navigator.of(context).pop(); // Cerrar el diálogo de éxito
+                Navigator.of(context).pop(); // Cerrar el modal de incidencia
+                setState(() {
+                  // Recargar la incidencia para reflejar el nuevo estado
+                  Provider.of<IncidenciaController>(context, listen: false)
+                      .fetchIncidenciasPorPersonal(
+                          widget.incidencia.personalId);
+                });
+              },
+              child: const Text('OK'),
             ),
           ],
         );

@@ -123,6 +123,8 @@ class ChatIncidenciaScreen extends StatelessWidget {
 
   Widget _buildMessageInput(BuildContext context,
       TextEditingController controller, Incidencia updatedIncidencia) {
+    bool isIncidenciaCerrada = updatedIncidencia.estado == 'cerrada';
+
     return Container(
       color: const Color.fromARGB(255, 255, 255, 255),
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
@@ -132,7 +134,8 @@ class ChatIncidenciaScreen extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               decoration: BoxDecoration(
-                color: Colors.grey[200],
+                color:
+                    isIncidenciaCerrada ? Colors.grey[300] : Colors.grey[200],
                 borderRadius: BorderRadius.circular(14.0),
               ),
               child: TextField(
@@ -141,33 +144,38 @@ class ChatIncidenciaScreen extends StatelessWidget {
                   hintText: "Escribe un mensaje...",
                   border: InputBorder.none,
                 ),
+                enabled: !isIncidenciaCerrada,
               ),
             ),
           ),
           IconButton(
             icon: const Icon(Icons.send, color: Color(0xFF0575E6)),
-            onPressed: () async {
-              String contenido = controller.text.trim();
-              if (contenido.isNotEmpty) {
-                int? remitenteId = await SharedPreferencesService.getUserId();
-                String? remitenteTipo =
-                    await SharedPreferencesService.getUserType();
+            onPressed: isIncidenciaCerrada
+                ? null
+                : () async {
+                    String contenido = controller.text.trim();
+                    if (contenido.isNotEmpty) {
+                      int? remitenteId =
+                          await SharedPreferencesService.getUserId();
+                      String? remitenteTipo =
+                          await SharedPreferencesService.getUserType();
 
-                if (remitenteId != null && remitenteTipo != null) {
-                  Provider.of<IncidenciaController>(context, listen: false)
-                      .addMensajeIncidencia(updatedIncidencia.id, contenido,
-                          remitenteTipo, remitenteId);
-                  controller.clear();
-                } else {
-                  // Manejar el caso donde remitenteId o remitenteTipo son nulos
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Error: Usuario no autenticado.'),
-                    ),
-                  );
-                }
-              }
-            },
+                      if (remitenteId != null && remitenteTipo != null) {
+                        Provider.of<IncidenciaController>(context,
+                                listen: false)
+                            .addMensajeIncidencia(updatedIncidencia.id,
+                                contenido, remitenteTipo, remitenteId);
+                        controller.clear();
+                      } else {
+                        // Manejar el caso donde remitenteId o remitenteTipo son nulos
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Error: Usuario no autenticado.'),
+                          ),
+                        );
+                      }
+                    }
+                  },
           ),
         ],
       ),
@@ -179,6 +187,5 @@ class ChatIncidenciaScreen extends StatelessWidget {
     await SharedPreferencesService.removeUserId();
     await SharedPreferencesService.removeUserType();
     Navigator.pushReplacementNamed(context, '/');
-    print("Cierre de sesión solicitado y procesado.");
   }
 }

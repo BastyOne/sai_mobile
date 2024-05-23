@@ -11,7 +11,7 @@ import 'views/Alumno/incidenciasViewsAlumnos/chat_incidencia_view.dart'; // Impo
 import 'views/Personal/estadisticasViewPersonal/stats_view.dart';
 import 'views/Personal/incidenciasViewsPersonal/chat_incidencia_personal_view.dart';
 import 'views/Personal/incidenciasViewsPersonal/ver_incidencias_view.dart';
-import 'views/login_view.dart';
+import 'views/Auth/login_view.dart';
 import 'views/Personal/home_personal_view.dart';
 import 'views/Alumno/home_alumno_view.dart';
 import 'views/Alumno/preguntasAlumno/preguntas_alumno_view.dart';

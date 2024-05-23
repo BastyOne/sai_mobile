@@ -7,6 +7,7 @@ import '../../../widgets/custom_drawer.dart';
 import '../../../controllers/incidencia_controller.dart';
 import '../../../models/incidencia.dart';
 import '../../../widgets/incidencia_item_personal.dart';
+import 'chat_incidencia_personal_view.dart';
 
 class VerIncidenciasScreen extends StatefulWidget {
   final int personalId;
@@ -252,14 +253,21 @@ class _VerIncidenciasScreenState extends State<VerIncidenciasScreen> {
               itemBuilder: (context, index) {
                 Incidencia incidencia = controller.incidenciasFiltradas[index];
                 return GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(
+                  onTap: () async {
+                    bool? updated = await Navigator.push(
                       context,
-                      '/chatIncidenciaPersonal',
-                      arguments: {
-                        'incidencia': incidencia,
-                      },
+                      MaterialPageRoute(
+                        builder: (context) => ChatIncidenciaPersonalScreen(
+                          incidencia: incidencia,
+                        ),
+                      ),
                     );
+
+                    if (updated == true) {
+                      await Provider.of<IncidenciaController>(context,
+                              listen: false)
+                          .fetchIncidenciasPorPersonal(widget.personalId);
+                    }
                   },
                   child: IncidenciaItemPersonal(
                     incidencia: incidencia,

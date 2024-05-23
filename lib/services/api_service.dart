@@ -313,4 +313,22 @@ class ApiService {
           'Failed to close incidencia. Status code: ${response.statusCode}');
     }
   }
+
+  Future<void> reabrirIncidencia(int incidenciaId) async {
+    String? token = await storage.read(key: 'token');
+    if (token == null) throw Exception('No token found in storage');
+
+    final response = await http.put(
+      Uri.parse('$baseUrl/api/incidencia/reabrir/$incidenciaId'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception(
+          'Failed to reopen incidencia. Status code: ${response.statusCode}');
+    }
+  }
 }
