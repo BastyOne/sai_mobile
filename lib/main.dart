@@ -4,20 +4,20 @@ import 'models/incidencia.dart';
 import 'services/shared_preferences.dart';
 import 'controllers/mensaje_diario_controller.dart';
 import 'controllers/incidencia_controller.dart';
-import 'views/Alumno/FAQsViewsAlumno/faq_alumno_view.dart';
-import 'views/Alumno/foroAlumno/foro_alumno_view.dart';
-import 'views/Alumno/incidenciasViewsAlumnos/incidencias_status_view.dart';
-import 'views/Alumno/incidenciasViewsAlumnos/chat_incidencia_view.dart'; // Importar la nueva pantalla
+import 'views/Alumno/FAQsViewAlumno/faq_alumno_view.dart';
+import 'views/Alumno/foroViewAlumno/foro_alumno_view.dart';
+import 'views/Alumno/incidenciasViewAlumno/incidencias_status_view.dart';
+import 'views/Alumno/incidenciasViewAlumno/chat_incidencia_view.dart'; // Importar la nueva pantalla
 import 'views/Personal/estadisticasViewPersonal/stats_view.dart';
-import 'views/Personal/incidenciasViewsPersonal/chat_incidencia_personal_view.dart';
-import 'views/Personal/incidenciasViewsPersonal/ver_incidencias_view.dart';
+import 'views/Personal/incidenciasViewPersonal/chat_incidencia_personal_view.dart';
+import 'views/Personal/incidenciasViewPersonal/ver_incidencias_view.dart';
 import 'views/Auth/login_view.dart';
 import 'views/Personal/home_personal_view.dart';
 import 'views/Alumno/home_alumno_view.dart';
-import 'views/Alumno/preguntasAlumno/preguntas_alumno_view.dart';
-import 'views/Alumno/incidenciasViewsAlumnos/seleccionar_categoria_view.dart';
-import 'views/Alumno/incidenciasViewsAlumnos/seleccionar_subcategoria_view.dart';
-import 'views/Alumno/incidenciasViewsAlumnos/agregar_descripcion_view.dart';
+import 'views/Alumno/preguntasViewAlumno/preguntas_alumno_view.dart';
+import 'views/Alumno/incidenciasViewAlumno/seleccionar_categoria_view.dart';
+import 'views/Alumno/incidenciasViewAlumno/seleccionar_subcategoria_view.dart';
+import 'views/Alumno/incidenciasViewAlumno/agregar_descripcion_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
