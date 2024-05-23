@@ -8,9 +8,9 @@ class Incidencia {
   final String descripcion;
   final int personalId;
   final int? carreraId;
-  final String estado;
+  late final String estado;
   final DateTime fechaHoraCreacion;
-  final DateTime? fechaHoraCierre;
+  late final DateTime? fechaHoraCierre;
   final bool reabierta;
   final String? prioridad;
   final List<RespuestaIncidencia> respuestas;

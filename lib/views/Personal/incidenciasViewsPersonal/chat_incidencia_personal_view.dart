@@ -125,6 +125,8 @@ class ChatIncidenciaPersonalScreen extends StatelessWidget {
 
   Widget _buildMessageInput(BuildContext context,
       TextEditingController controller, Incidencia updatedIncidencia) {
+    bool isIncidenciaCerrada = updatedIncidencia.estado == 'cerrada';
+
     return Container(
       color: Color.fromARGB(255, 255, 255, 255),
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
@@ -140,7 +142,8 @@ class ChatIncidenciaPersonalScreen extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               decoration: BoxDecoration(
-                color: Colors.grey[200],
+                color:
+                    isIncidenciaCerrada ? Colors.grey[300] : Colors.grey[200],
                 borderRadius: BorderRadius.circular(14.0),
               ),
               child: TextField(
@@ -149,33 +152,38 @@ class ChatIncidenciaPersonalScreen extends StatelessWidget {
                   hintText: "Escribe un mensaje...",
                   border: InputBorder.none,
                 ),
+                enabled: !isIncidenciaCerrada,
               ),
             ),
           ),
           IconButton(
             icon: const Icon(Icons.send, color: Color(0xFF0575E6)),
-            onPressed: () async {
-              String contenido = controller.text.trim();
-              if (contenido.isNotEmpty) {
-                int? remitenteId = await SharedPreferencesService.getUserId();
-                String? remitenteTipo =
-                    await SharedPreferencesService.getUserType();
+            onPressed: isIncidenciaCerrada
+                ? null
+                : () async {
+                    String contenido = controller.text.trim();
+                    if (contenido.isNotEmpty) {
+                      int? remitenteId =
+                          await SharedPreferencesService.getUserId();
+                      String? remitenteTipo =
+                          await SharedPreferencesService.getUserType();
 
-                if (remitenteId != null && remitenteTipo != null) {
-                  Provider.of<IncidenciaController>(context, listen: false)
-                      .addMensajeIncidencia(updatedIncidencia.id, contenido,
-                          remitenteTipo, remitenteId);
-                  controller.clear();
-                } else {
-                  // Manejar el caso donde remitenteId o remitenteTipo son nulos
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Error: Usuario no autenticado.'),
-                    ),
-                  );
-                }
-              }
-            },
+                      if (remitenteId != null && remitenteTipo != null) {
+                        Provider.of<IncidenciaController>(context,
+                                listen: false)
+                            .addMensajeIncidencia(updatedIncidencia.id,
+                                contenido, remitenteTipo, remitenteId);
+                        controller.clear();
+                      } else {
+                        // Manejar el caso donde remitenteId o remitenteTipo son nulos
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Error: Usuario no autenticado.'),
+                          ),
+                        );
+                      }
+                    }
+                  },
           ),
         ],
       ),
@@ -187,78 +195,98 @@ class ChatIncidenciaPersonalScreen extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Información de la Incidencia',
-              style: TextStyle(color: Color(0xFF0575E6))),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('Incidencia',
+                  style: TextStyle(color: Color(0xFF0575E6))),
+              IconButton(
+                icon: const Icon(Icons.close, color: Color(0xFF0575E6)),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
           content: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text('Información de la Incidencia',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Color(0xFF0575E6))),
-                const SizedBox(height: 10),
-                Text('Descripción: ${incidencia.descripcion}',
-                    style: const TextStyle(color: Color(0xFF0575E6))),
-                const SizedBox(height: 10),
-                Text('Estado: ${incidencia.estado}',
-                    style: const TextStyle(color: Color(0xFF0575E6))),
-                const SizedBox(height: 10),
-                Text(
-                    'Fecha de Creación: ${DateFormat('yyyy-MM-dd HH:mm').format(incidencia.fechaHoraCreacion)}',
-                    style: const TextStyle(color: Color(0xFF0575E6))),
-                if (incidencia.fechaHoraCierre != null)
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                  maxWidth: MediaQuery.of(context).size.width * 0.8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('Información de la Incidencia',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF0575E6))),
+                  const SizedBox(height: 10),
+                  Text('Descripción: ${incidencia.descripcion}',
+                      style: const TextStyle(color: Color(0xFF0575E6))),
+                  const SizedBox(height: 10),
+                  Text('Estado: ${incidencia.estado}',
+                      style: const TextStyle(color: Color(0xFF0575E6))),
+                  const SizedBox(height: 10),
                   Text(
-                      'Fecha de Cierre: ${DateFormat('yyyy-MM-dd HH:mm').format(incidencia.fechaHoraCierre!)}',
+                      'Fecha de Creación: ${DateFormat('yyyy-MM-dd HH:mm').format(incidencia.fechaHoraCreacion)}',
                       style: const TextStyle(color: Color(0xFF0575E6))),
-                const SizedBox(height: 20),
-                const Text('Información del Alumno',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Color(0xFF0575E6))),
-                const SizedBox(height: 10),
-                if (incidencia.alumno != null) ...[
-                  Text(
-                      'Nombre: ${incidencia.alumno!.nombre} ${incidencia.alumno!.apellido}',
-                      style: const TextStyle(color: Color(0xFF0575E6))),
-                  Text('Rut: ${incidencia.alumno!.rut}',
-                      style: const TextStyle(color: Color(0xFF0575E6))),
-                  Text('Email: ${incidencia.alumno!.email}',
-                      style: const TextStyle(color: Color(0xFF0575E6))),
-                  Text('Carrera: ${incidencia.alumno!.carreraNombre}',
-                      style: const TextStyle(color: Color(0xFF0575E6))),
-                ] else
-                  const Text('Alumno: Información no disponible',
-                      style: TextStyle(color: Color(0xFF0575E6))),
-                const SizedBox(height: 20),
-                const Text('Archivos',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Color(0xFF0575E6))),
-                if (incidencia.archivos.isNotEmpty) ...[
-                  for (var archivo in incidencia.archivos) ...[
-                    ListTile(
-                      title: Text(archivo.archivoNombre,
-                          style: const TextStyle(color: Color(0xFF0575E6))),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.download,
-                            color: Color(0xFF0575E6)),
-                        onPressed: () {
-                          _downloadFile(context, archivo.archivoUrl,
-                              archivo.archivoNombre);
-                        },
+                  if (incidencia.fechaHoraCierre != null)
+                    Text(
+                        'Fecha de Cierre: ${DateFormat('yyyy-MM-dd HH:mm').format(incidencia.fechaHoraCierre!)}',
+                        style: const TextStyle(color: Color(0xFF0575E6))),
+                  const SizedBox(height: 20),
+                  const Text('Información del Alumno',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF0575E6))),
+                  const SizedBox(height: 10),
+                  if (incidencia.alumno != null) ...[
+                    Text(
+                        'Nombre: ${incidencia.alumno!.nombre} ${incidencia.alumno!.apellido}',
+                        style: const TextStyle(color: Color(0xFF0575E6))),
+                    Text('Rut: ${incidencia.alumno!.rut}',
+                        style: const TextStyle(color: Color(0xFF0575E6))),
+                    Text('Email: ${incidencia.alumno!.email}',
+                        style: const TextStyle(color: Color(0xFF0575E6))),
+                    Text('Carrera: ${incidencia.alumno!.carreraNombre}',
+                        style: const TextStyle(color: Color(0xFF0575E6))),
+                  ] else
+                    const Text('Alumno: Información no disponible',
+                        style: TextStyle(color: Color(0xFF0575E6))),
+                  const SizedBox(height: 20),
+                  const Text('Archivos',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF0575E6))),
+                  if (incidencia.archivos.isNotEmpty) ...[
+                    for (var archivo in incidencia.archivos) ...[
+                      ListTile(
+                        title: Text(archivo.archivoNombre,
+                            style: const TextStyle(color: Color(0xFF0575E6))),
+                        trailing: IconButton(
+                          icon: const Icon(Icons.download,
+                              color: Color(0xFF0575E6)),
+                          onPressed: () {
+                            _downloadFile(context, archivo.archivoUrl,
+                                archivo.archivoNombre);
+                          },
+                        ),
                       ),
-                    ),
-                  ],
-                ] else
-                  const Text('No hay archivos adjuntos.',
-                      style: TextStyle(color: Color(0xFF0575E6))),
-              ],
+                    ],
+                  ] else
+                    const Text('No hay archivos adjuntos.',
+                        style: TextStyle(color: Color(0xFF0575E6))),
+                ],
+              ),
             ),
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('Cerrar',
+              child: const Text('Cerrar Incidencia',
                   style: TextStyle(color: Color(0xFF0575E6))),
-              onPressed: () {
+              onPressed: () async {
+                await Provider.of<IncidenciaController>(context, listen: false)
+                    .cerrarIncidencia(incidencia.id);
                 Navigator.of(context).pop();
               },
             ),

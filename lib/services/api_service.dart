@@ -295,4 +295,22 @@ class ApiService {
           'Failed to get personal info. Status code: ${response.statusCode}');
     }
   }
+
+  Future<void> cerrarIncidencia(int incidenciaId) async {
+    String? token = await storage.read(key: 'token');
+    if (token == null) throw Exception('No token found in storage');
+
+    final response = await http.put(
+      Uri.parse('$baseUrl/api/incidencia/cerrar/$incidenciaId'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception(
+          'Failed to close incidencia. Status code: ${response.statusCode}');
+    }
+  }
 }
