@@ -9,13 +9,10 @@ class LoginController {
     try {
       final user = await apiService.login(rut, password);
       if (user != null) {
-        print('Login successful. User ID: ${user.userId}');
         await SharedPreferencesService.setToken(user.token);
-        print('User Type: ${user.userType}');
 
         switch (user.userType) {
           case 'alumno':
-            print('Navigating to HomeAlumnoView with userId: ${user.userId}');
             Navigator.pushReplacementNamed(
               context,
               '/home_alumno',
@@ -23,7 +20,6 @@ class LoginController {
             );
             break;
           case 'personal':
-            print('Navigating to HomePersonalView with userId: ${user.userId}');
             Navigator.pushReplacementNamed(
               context,
               '/home_personal',
@@ -31,15 +27,14 @@ class LoginController {
             );
             break;
           default:
-            print('Unknown user type: ${user.userType}');
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content:
                     Text('Tipo de usuario desconocido: ${user.userType}')));
             break;
         }
       } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Credenciales inválidas')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Credenciales inválidas')));
       }
     } catch (e) {
       ScaffoldMessenger.of(context)

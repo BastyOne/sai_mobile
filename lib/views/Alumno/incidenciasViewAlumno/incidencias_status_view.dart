@@ -79,6 +79,5 @@ class IncidenciaStatusScreen extends StatelessWidget {
   void _logout(BuildContext context) async {
     await SharedPreferencesService.removeToken();
     Navigator.pushReplacementNamed(context, '/');
-    print("Cierre de sesión solicitado y procesado.");
   }
 }

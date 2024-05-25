@@ -8,10 +8,10 @@ class LoginView extends StatefulWidget {
   const LoginView({super.key});
 
   @override
-  _LoginViewState createState() => _LoginViewState();
+  LoginViewState createState() => LoginViewState();
 }
 
-class _LoginViewState extends State<LoginView> {
+class LoginViewState extends State<LoginView> {
   final LoginController _loginController = LoginController();
   final TextEditingController _rutController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -48,9 +48,7 @@ class _LoginViewState extends State<LoginView> {
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
-                  onPressed: () {
-                    // TODO: Implementar 'Olvidé mi contraseña'
-                  },
+                  onPressed: () {},
                   child: Text('Olvidé mi contraseña', style: buttonTextStyle),
                 ),
               ),
@@ -65,9 +63,7 @@ class _LoginViewState extends State<LoginView> {
                     color: Color(0xFF00A2E1), fontWeight: FontWeight.w600),
               ),
               TextButton(
-                onPressed: () {
-                  // TODO: Implementar 'Cambiar contraseña'
-                },
+                onPressed: () {},
                 child: Text('Cambiar contraseña', style: buttonTextStyle),
               ),
               const SizedBox(height: 10),

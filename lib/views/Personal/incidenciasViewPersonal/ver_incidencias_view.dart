@@ -15,10 +15,10 @@ class VerIncidenciasScreen extends StatefulWidget {
   const VerIncidenciasScreen({super.key, required this.personalId});
 
   @override
-  _VerIncidenciasScreenState createState() => _VerIncidenciasScreenState();
+  VerIncidenciasScreenState createState() => VerIncidenciasScreenState();
 }
 
-class _VerIncidenciasScreenState extends State<VerIncidenciasScreen> {
+class VerIncidenciasScreenState extends State<VerIncidenciasScreen> {
   String? selectedCategoria;
   String? selectedPrioridad;
   String? selectedEstado;
@@ -40,7 +40,6 @@ class _VerIncidenciasScreenState extends State<VerIncidenciasScreen> {
   void _logout(BuildContext context) async {
     await SharedPreferencesService.removeToken();
     Navigator.pushReplacementNamed(context, '/');
-    print("Cierre de sesión solicitado y procesado.");
   }
 
   void _showFilterDialog(BuildContext context) {

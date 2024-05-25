@@ -12,15 +12,14 @@ class AgregarDescripcionScreen extends StatefulWidget {
   final int carreraId;
 
   const AgregarDescripcionScreen(
-      {Key? key, required this.userId, required this.carreraId})
-      : super(key: key);
+      {super.key, required this.userId, required this.carreraId});
 
   @override
-  _AgregarDescripcionScreenState createState() =>
-      _AgregarDescripcionScreenState();
+  AgregarDescripcionScreenState createState() =>
+      AgregarDescripcionScreenState();
 }
 
-class _AgregarDescripcionScreenState extends State<AgregarDescripcionScreen> {
+class AgregarDescripcionScreenState extends State<AgregarDescripcionScreen> {
   final _formKey = GlobalKey<FormState>();
 
   @override

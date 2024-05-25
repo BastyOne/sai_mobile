@@ -9,22 +9,22 @@ class PreguntasFrecuentesScreen extends StatefulWidget {
   const PreguntasFrecuentesScreen({super.key});
 
   @override
-  _PreguntasFrecuentesScreenState createState() =>
-      _PreguntasFrecuentesScreenState();
+  PreguntasFrecuentesScreenState createState() =>
+      PreguntasFrecuentesScreenState();
 }
 
-class _PreguntasFrecuentesScreenState extends State<PreguntasFrecuentesScreen>
+class PreguntasFrecuentesScreenState extends State<PreguntasFrecuentesScreen>
     with SingleTickerProviderStateMixin {
   late PreguntasFrecuentesController _controller;
   int _selectedCategoryId = 0; // Usar 0 para representar "todas las categorías"
-  List<int> _categories = [
+  final List<int> _categories = [
     0,
     1,
     2,
     3,
     4
   ]; // IDs de categorías de ejemplo, incluyendo "todas las categorías"
-  Map<int, String> _categoryNames = {
+  final Map<int, String> _categoryNames = {
     0: 'Todas las Categorías',
     1: 'Beneficios Estudiantiles',
     2: 'Actividades Extraprogramáticas',
@@ -61,7 +61,7 @@ class _PreguntasFrecuentesScreenState extends State<PreguntasFrecuentesScreen>
             child: Row(
               children: [
                 PopupMenuButton<String>(
-                  icon: Icon(Icons.filter_list),
+                  icon: const Icon(Icons.filter_list),
                   onSelected: (value) {
                     if (value == 'categoría') {
                       _showCategoryDialog();
@@ -71,11 +71,11 @@ class _PreguntasFrecuentesScreenState extends State<PreguntasFrecuentesScreen>
                   },
                   itemBuilder: (BuildContext context) {
                     return [
-                      PopupMenuItem<String>(
+                      const PopupMenuItem<String>(
                         value: 'categoría',
                         child: Text('Categoría'),
                       ),
-                      PopupMenuItem<String>(
+                      const PopupMenuItem<String>(
                         value: 'búsqueda',
                         child: Text('Búsqueda por texto'),
                       ),
@@ -195,7 +195,7 @@ class _PreguntasFrecuentesScreenState extends State<PreguntasFrecuentesScreen>
           content: TextField(
             decoration: InputDecoration(
               hintText: 'Buscar...',
-              prefixIcon: Icon(Icons.search),
+              prefixIcon: const Icon(Icons.search),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
               ),
@@ -222,6 +222,5 @@ class _PreguntasFrecuentesScreenState extends State<PreguntasFrecuentesScreen>
   void _logout(BuildContext context) async {
     await SharedPreferencesService.removeToken();
     Navigator.pushReplacementNamed(context, '/');
-    print("Cierre de sesión solicitado y procesado.");
   }
 }

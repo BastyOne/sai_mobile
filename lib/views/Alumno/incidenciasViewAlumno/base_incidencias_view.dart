@@ -10,13 +10,13 @@ class BaseScreen extends StatelessWidget {
   final Widget? bottomNavigationBar;
 
   const BaseScreen({
-    Key? key,
+    super.key,
     required this.title,
     required this.body,
     required this.onLogout,
     required this.step,
     this.bottomNavigationBar,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -15,11 +15,11 @@ class ChatIncidenciaPersonalScreen extends StatefulWidget {
   const ChatIncidenciaPersonalScreen({super.key, required this.incidencia});
 
   @override
-  _ChatIncidenciaPersonalScreenState createState() =>
-      _ChatIncidenciaPersonalScreenState();
+  ChatIncidenciaPersonalScreenState createState() =>
+      ChatIncidenciaPersonalScreenState();
 }
 
-class _ChatIncidenciaPersonalScreenState
+class ChatIncidenciaPersonalScreenState
     extends State<ChatIncidenciaPersonalScreen> {
   late TextEditingController _controller;
   bool incidenciaUpdated = false;

@@ -9,15 +9,14 @@ class SeleccionarCategoriaHijoScreen extends StatefulWidget {
   final int carreraId; // Añadir este campo
 
   const SeleccionarCategoriaHijoScreen(
-      {Key? key, required this.userId, required this.carreraId})
-      : super(key: key);
+      {super.key, required this.userId, required this.carreraId});
 
   @override
-  _SeleccionarCategoriaHijoScreenState createState() =>
-      _SeleccionarCategoriaHijoScreenState();
+  SeleccionarCategoriaHijoScreenState createState() =>
+      SeleccionarCategoriaHijoScreenState();
 }
 
-class _SeleccionarCategoriaHijoScreenState
+class SeleccionarCategoriaHijoScreenState
     extends State<SeleccionarCategoriaHijoScreen> {
   int? _selectedPersonal;
   int? _selectedCategoriaHijo;

@@ -16,10 +16,10 @@ class HomePersonalView extends StatefulWidget {
   const HomePersonalView({super.key, required this.userId});
 
   @override
-  _HomePersonalViewState createState() => _HomePersonalViewState();
+  HomePersonalViewState createState() => HomePersonalViewState();
 }
 
-class _HomePersonalViewState extends State<HomePersonalView> {
+class HomePersonalViewState extends State<HomePersonalView> {
   late Future<PersonalInfo?> personalInfoFuture;
   final CarouselController _controller = CarouselController();
 
@@ -36,7 +36,6 @@ class _HomePersonalViewState extends State<HomePersonalView> {
   void _logout(BuildContext context) async {
     await SharedPreferencesService.removeToken();
     Navigator.pushReplacementNamed(context, '/');
-    print("Cierre de sesión solicitado y procesado.");
   }
 
   @override
