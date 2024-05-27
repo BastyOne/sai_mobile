@@ -27,6 +27,7 @@ class ApiService {
       await storage.write(key: 'token', value: data['token']);
       await SharedPreferencesService.setUserType(data['userType']);
       await SharedPreferencesService.setUserId(data['userId']);
+      await SharedPreferencesService.setCarreraId(data['carrera_id']);
       return User.fromJson({
         'token': data['token'],
         'userId': data['userId'],

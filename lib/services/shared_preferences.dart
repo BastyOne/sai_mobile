@@ -69,4 +69,25 @@ class SharedPreferencesService {
     }
     await _prefs!.remove('userId');
   }
+
+  static Future<void> setCarreraId(int carreraId) async {
+    if (_prefs == null) {
+      await initialize();
+    }
+    await _prefs!.setInt('carreraId', carreraId);
+  }
+
+  static Future<int?> getCarreraId() async {
+    if (_prefs == null) {
+      await initialize();
+    }
+    return _prefs!.getInt('carreraId');
+  }
+
+  static Future<void> removeCarreraId() async {
+    if (_prefs == null) {
+      await initialize();
+    }
+    await _prefs!.remove('carreraId');
+  }
 }
