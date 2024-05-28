@@ -1,9 +1,9 @@
-import '../services/api_service.dart';
+import '../services/auth_service.dart';
 import 'package:flutter/material.dart';
 import '../services/shared_preferences.dart';
 
 class LoginController {
-  final ApiService apiService = ApiService();
+  final AuthService apiService = AuthService();
 
   void login(String rut, String password, BuildContext context) async {
     try {

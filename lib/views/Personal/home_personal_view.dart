@@ -6,7 +6,7 @@ import '../../widgets/custom_app_bar.dart';
 import '../../widgets/custom_drawer.dart';
 import '../../widgets/personal_info_card.dart';
 import '../../models/personal.dart';
-import '../../services/api_service.dart';
+import '../../services/user_service.dart';
 import '../../controllers/mensaje_diario_controller.dart';
 import 'package:provider/provider.dart';
 
@@ -26,7 +26,7 @@ class HomePersonalViewState extends State<HomePersonalView> {
   @override
   void initState() {
     super.initState();
-    personalInfoFuture = ApiService().getPersonalInfo(widget.userId);
+    personalInfoFuture = UserService().getPersonalInfo(widget.userId);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<MensajeDiarioController>(context, listen: false)
           .fetchMensajesDiarios();

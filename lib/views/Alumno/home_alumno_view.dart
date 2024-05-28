@@ -6,7 +6,7 @@ import '../../widgets/custom_app_bar.dart';
 import '../../widgets/student_info_card.dart';
 import '../../widgets/custom_drawer.dart';
 import '../../models/alumno.dart';
-import '../../services/api_service.dart';
+import '../../services/user_service.dart';
 import '../../controllers/mensaje_diario_controller.dart';
 import 'package:provider/provider.dart';
 
@@ -28,7 +28,7 @@ class HomeAlumnoViewState extends State<HomeAlumnoView> {
   @override
   void initState() {
     super.initState();
-    alumnoInfoFuture = ApiService().getAlumnoInfo(widget.userId);
+    alumnoInfoFuture = UserService().getAlumnoInfo(widget.userId);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<MensajeDiarioController>(context, listen: false)
           .fetchMensajesDiarios();

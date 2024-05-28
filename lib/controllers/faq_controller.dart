@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../models/faq.dart';
-import '../services/api_service.dart';
+import '../services/faq_service.dart';
 
 class PreguntasFrecuentesController {
-  final ApiService _apiService = ApiService();
+  final FaqService _apiService = FaqService();
   late TabController tabController;
   Map<int, Future<List<FAQ>>> faqsPorCategoria = {};
   late Future<List<FAQ>> todasLasFaqs;

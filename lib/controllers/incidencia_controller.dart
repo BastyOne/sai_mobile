@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../services/api_service.dart';
+import '../services/incidencia_service.dart';
 import '../models/incidencia.dart';
 
 class IncidenciaController with ChangeNotifier {
-  final ApiService apiService = ApiService();
+  final IncidenciaService apiService = IncidenciaService();
   List<Incidencia> _incidencias = [];
   List<Incidencia> _incidenciasFiltradas = [];
   final Map<int, String> _categorias = {};

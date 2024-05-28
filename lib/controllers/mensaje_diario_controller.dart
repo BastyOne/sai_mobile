@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import '../services/api_service.dart';
+import 'package:sai_mobile/services/mensaje_diario_service.dart';
+
 import '../models/mensaje_diario.dart';
 
 class MensajeDiarioController with ChangeNotifier {
-  final ApiService apiService = ApiService();
+  final MensajeDiarioService apiService = MensajeDiarioService();
   List<MensajeDiario> mensajesDiarios = [];
   bool isLoading = false;
   String errorMessage = '';
