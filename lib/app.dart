@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'controllers/foro_controller.dart';
 import 'models/incidencia.dart';
 import 'controllers/mensaje_diario_controller.dart';
 import 'controllers/incidencia_controller.dart';
 import 'views/alumno/FAQsViewAlumno/faq_alumno_view.dart';
+import 'views/alumno/foroViewAlumno/crear_post_view.dart';
+import 'views/alumno/foroViewAlumno/detalle_post_view.dart';
 import 'views/alumno/foroViewAlumno/foro_alumno_view.dart';
 import 'views/alumno/incidenciasViewAlumno/incidencias_status_view.dart';
 import 'views/alumno/incidenciasViewAlumno/chat_incidencia_view.dart';
@@ -27,6 +30,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => MensajeDiarioController()),
         ChangeNotifierProvider(create: (_) => IncidenciaController()),
+        ChangeNotifierProvider(create: (_) => ForoController()),
       ],
       child: MaterialApp(
         title: 'Mi App Incidencias',
@@ -40,6 +44,10 @@ class MyApp extends StatelessWidget {
           '/preguntasFrecuentes': (context) =>
               const PreguntasFrecuentesScreen(),
           '/foroEstudiantil': (context) => const ForoEstudiantilScreen(),
+          'detallePost': (context) => DetallePostScreen(
+              postId: (ModalRoute.of(context)?.settings.arguments
+                  as Map<String, dynamic>)['postId'] as int),
+          'agregarPost': (context) => const AgregarPostScreen(),
           '/incidenciasPersonal': (context) => VerIncidenciasScreen(
               personalId: (ModalRoute.of(context)?.settings.arguments
                   as Map<String, dynamic>)['userId'] as int),
