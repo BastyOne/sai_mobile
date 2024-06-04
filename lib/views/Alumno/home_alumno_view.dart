@@ -64,7 +64,7 @@ class HomeAlumnoViewState extends State<HomeAlumnoView> {
                   return Center(
                       child: Text("Error: ${controller.errorMessage}"));
                 } else {
-                  return buildCarousel(controller.mensajesDiarios);
+                  return buildCarousel(controller.mensajesDiariosActivos);
                 }
               },
             ),

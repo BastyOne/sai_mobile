@@ -62,7 +62,7 @@ class HomePersonalViewState extends State<HomePersonalView> {
                   return Center(
                       child: Text("Error: ${controller.errorMessage}"));
                 } else {
-                  return buildCarousel(controller.mensajesDiarios);
+                  return buildCarousel(controller.mensajesDiariosActivos);
                 }
               },
             ),

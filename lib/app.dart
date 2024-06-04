@@ -10,6 +10,7 @@ import 'views/alumno/foroViewAlumno/detalle_post_view.dart';
 import 'views/alumno/foroViewAlumno/foro_alumno_view.dart';
 import 'views/alumno/incidenciasViewAlumno/incidencias_status_view.dart';
 import 'views/alumno/incidenciasViewAlumno/chat_incidencia_view.dart';
+import 'views/personal/settingsPersonal/settings_view.dart';
 import 'views/personal/estadisticasViewPersonal/stats_view.dart';
 import 'views/personal/incidenciasViewPersonal/chat_incidencia_personal_view.dart';
 import 'views/personal/incidenciasViewPersonal/ver_incidencias_view.dart';
@@ -52,6 +53,7 @@ class MyApp extends StatelessWidget {
               personalId: (ModalRoute.of(context)?.settings.arguments
                   as Map<String, dynamic>)['userId'] as int),
           '/estadisticasPersonal': (context) => const VerEstadisticasScreen(),
+          '/settings': (context) => const SettingsScreen(),
         },
         onGenerateRoute: (settings) {
           if (settings.name == '/home_alumno') {
