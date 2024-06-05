@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../services/shared_preferences.dart';
 import '../../../widgets/custom_app_bar.dart';
 import '../../../widgets/custom_drawer.dart';
+import 'settingsFAQS/settings_faqs_view.dart';
 import 'settingsMensajeDiario/settings_mensaje_diario_view.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -26,7 +27,7 @@ class SettingsScreen extends StatelessWidget {
       ),
       body: ListView(
         children: [
-          _createSettingsItem(Icons.network_wifi, 'Network & internet'),
+          _createSettingsItem(Icons.help, 'Preguntas Frecuentes', context),
           _createSettingsItem(Icons.devices, 'Connected devices'),
           _createSettingsItem(Icons.apps, 'Apps'),
           _createSettingsItem(Icons.notifications, 'Notifications'),
@@ -50,7 +51,13 @@ class SettingsScreen extends StatelessWidget {
         style: const TextStyle(color: Color(0xFF0575E6)),
       ),
       onTap: () {
-        if (title == 'Mensaje Diario' && context != null) {
+        if (title == 'Preguntas Frecuentes' && context != null) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const AdminPreguntasFrecuentesScreen()),
+          );
+        } else if (title == 'Mensaje Diario' && context != null) {
           Navigator.push(
             context,
             MaterialPageRoute(

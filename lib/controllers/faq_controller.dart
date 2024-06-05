@@ -28,4 +28,16 @@ class PreguntasFrecuentesController {
     }
     return faqs;
   }
+
+  Future<void> addFAQ(FAQ faq) async {
+    await _apiService.addFAQ(faq);
+  }
+
+  Future<void> updateFAQ(int id, FAQ faq) async {
+    await _apiService.updateFAQ(id, faq);
+  }
+
+  Future<void> deleteFAQ(int id) async {
+    await _apiService.deleteFAQ(id);
+  }
 }
