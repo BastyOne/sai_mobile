@@ -19,6 +19,7 @@ class AgregarPostScreenState extends State<AgregarPostScreen> {
   File? _selectedImage;
   String? archivoPath;
   int? userId;
+  bool esAnonimo = false; // Añadir este campo
 
   @override
   void initState() {
@@ -30,7 +31,7 @@ class AgregarPostScreenState extends State<AgregarPostScreen> {
     userId = await SharedPreferencesService.getUserId();
     if (userId == null) {
       // Maneja el caso en que el userId no esté disponible
-    } else {}
+    }
   }
 
   Future<void> _pickImage() async {
@@ -51,6 +52,7 @@ class AgregarPostScreenState extends State<AgregarPostScreen> {
         userId!, // Utilizar el userId obtenido de SharedPreferences
         _preguntaController.text,
         _contenidoController.text,
+        esAnonimo, // Añadir este campo
         archivoPath,
       );
       Navigator.pop(context);
@@ -116,6 +118,28 @@ class AgregarPostScreenState extends State<AgregarPostScreen> {
                 ),
                 maxLines: null,
               ),
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Row(
+                  children: [
+                    const Expanded(
+                      child: Text(
+                        'Publicar como anónimo',
+                        style: TextStyle(color: Colors.black, fontSize: 16),
+                      ),
+                    ),
+                    Checkbox(
+                      value: esAnonimo,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          esAnonimo = value!;
+                        });
+                      },
+                      activeColor: const Color(0xFF021B79), // Color del tick
+                    ),
+                  ],
+                ),
+              ),
               if (_selectedImage != null)
                 Padding(
                   padding: const EdgeInsets.only(top: 10),
@@ -128,6 +152,7 @@ class AgregarPostScreenState extends State<AgregarPostScreen> {
                 ),
               const Spacer(),
               Row(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   IconButton(
                     icon: const Icon(Icons.image, color: Color(0xFF021B79)),

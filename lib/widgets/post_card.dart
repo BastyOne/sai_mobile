@@ -27,7 +27,7 @@ class PostCard extends StatelessWidget {
                   CircleAvatar(
                     backgroundImage: post.autorFoto != null
                         ? NetworkImage(post.autorFoto!)
-                        : const AssetImage('assets/default_avatar.png')
+                        : const AssetImage('assets/images/defauluser.jpg')
                             as ImageProvider,
                     radius: 20,
                   ),

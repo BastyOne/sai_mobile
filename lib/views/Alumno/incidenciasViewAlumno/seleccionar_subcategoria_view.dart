@@ -268,7 +268,7 @@ class SeleccionarCategoriaHijoScreenState
             : null,
         child: const Text(
           'SIGUIENTE',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.white, fontSize: 13),
         ),
       ),
     );

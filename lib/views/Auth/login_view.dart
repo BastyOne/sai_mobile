@@ -34,7 +34,7 @@ class LoginViewState extends State<LoginView> {
               const SizedBox(height: 48),
               const Text(
                 'Portal de Incidencias Estudiantiles',
-                style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 48),
               InputField(

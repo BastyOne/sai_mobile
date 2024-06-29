@@ -80,7 +80,7 @@ class DetallePostScreenState extends State<DetallePostScreen> {
                                   backgroundImage: post.autorFoto != null
                                       ? NetworkImage(post.autorFoto!)
                                       : const AssetImage(
-                                              'assets/default_avatar.png')
+                                              'assets/images/defauluser.jpg')
                                           as ImageProvider,
                                   radius: 20,
                                 ),

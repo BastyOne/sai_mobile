@@ -17,11 +17,11 @@ class PersonalInfo {
 
   factory PersonalInfo.fromJson(Map<String, dynamic> json) {
     return PersonalInfo(
-      nombre: json['nombre'],
+      nombre: json['nombre'] ?? '',
       rut: json['rut'],
-      email: json['email'],
-      tipopersona: json['tipopersona']['nombre'],
-      carreraNombre: json['carrera']['nombre'],
+      email: json['email'] ?? '',
+      tipopersona: json['tipopersona']?['nombre'] ?? '',
+      carreraNombre: json['carrera']?['nombre'] ?? '',
       fotoUrl: json['foto'],
     );
   }

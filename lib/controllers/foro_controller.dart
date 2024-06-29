@@ -42,13 +42,15 @@ class ForoController extends ChangeNotifier {
     }
   }
 
-  Future<void> createPost(int autorId, String pregunta, String contenido,
+  Future<void> createPost(
+      int autorId, String pregunta, String contenido, bool esAnonimo,
       [String? archivoPath]) async {
     _isLoading = true;
     notifyListeners();
-
     try {
-      await _foroService.crearPost(autorId, pregunta, contenido, archivoPath);
+      final post = await _foroService.crearPost(
+          autorId, pregunta, contenido, esAnonimo, archivoPath);
+      print('Post creado: $post');
       await fetchPosts(); // Refrescar la lista de posts después de crear uno nuevo
     } finally {
       _isLoading = false;

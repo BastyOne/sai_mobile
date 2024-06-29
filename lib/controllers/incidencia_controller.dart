@@ -121,10 +121,11 @@ class IncidenciaController with ChangeNotifier {
     try {
       _incidencias = await apiService.fetchIncidenciasPorPersonal(personalId);
       _incidenciasFiltradas = List.from(_incidencias);
+      print('Incidencias cargadas: $_incidencias');
       _ordenarIncidencias();
       notifyListeners();
     } catch (e) {
-      // Error handling
+      print('Error al cargar incidencias: $e');
     }
   }
 
@@ -196,7 +197,9 @@ class IncidenciaController with ChangeNotifier {
 
   void resetFiltros() {
     _incidenciasFiltradas = List.from(_incidencias);
-    _ordenarIncidencias(); // Asegúrate de ordenar después de resetear
+    print(
+        'Filtros reseteados. Incidencias filtradas: $_incidenciasFiltradas'); // Agrega este print
+    _ordenarIncidencias();
     notifyListeners();
   }
 

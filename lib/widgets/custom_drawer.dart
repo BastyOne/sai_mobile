@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import '../views/alumno/settingsAlumno/actualizar_datos_alumno.dart';
 import '../views/personal/settingsPersonal/settings_view.dart';
 
 class CustomDrawer extends StatelessWidget {
@@ -58,15 +60,29 @@ class CustomDrawer extends StatelessWidget {
                       onTap: () => _navigateToHome(context)),
                   if (userType == 'alumno')
                     _createDrawerItem(
-                        icon: Icons.book, text: 'Info Personal', onTap: () {}),
-                  _createDrawerItem(
-                      icon: Icons.account_balance,
-                      text: 'Info Arancelería',
-                      onTap: () {}),
-                  _createDrawerItem(
-                      icon: Icons.school,
-                      text: 'Dirección Estudiantil',
-                      onTap: () {}),
+                        icon: Icons.contacts,
+                        text: 'Actualizar Datos',
+                        onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => UpdateAlumnoScreen()),
+                            )),
+                  if (userType == 'alumno')
+                    _createDrawerItem(
+                        icon: Icons.book,
+                        text: 'LMS',
+                        onTap: () {
+                          launchUrl(Uri.parse(
+                              'https://lms.ucm.cl/login/index.php#tabs-tree-start'));
+                        }),
+                  if (userType == 'alumno')
+                    _createDrawerItem(
+                        icon: Icons.account_balance,
+                        text: 'Portal Alumno',
+                        onTap: () {
+                          launchUrl(Uri.parse(
+                              'https://portalalumnos.ucm.cl/v2/index.php/login'));
+                        }),
                   if (userType == 'personal')
                     _createDrawerItem(
                         icon: Icons.settings,

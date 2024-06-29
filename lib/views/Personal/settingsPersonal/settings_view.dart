@@ -4,6 +4,8 @@ import '../../../widgets/custom_app_bar.dart';
 import '../../../widgets/custom_drawer.dart';
 import 'settingsFAQS/settings_faqs_view.dart';
 import 'settingsMensajeDiario/settings_mensaje_diario_view.dart';
+import 'settingsUsers/settings_alumno_view.dart';
+import 'settingsUsers/settings_personal_view.dart'; // Importa la nueva pantalla de personal
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -28,15 +30,11 @@ class SettingsScreen extends StatelessWidget {
       body: ListView(
         children: [
           _createSettingsItem(Icons.help, 'Preguntas Frecuentes', context),
-          _createSettingsItem(Icons.devices, 'Connected devices'),
-          _createSettingsItem(Icons.apps, 'Apps'),
-          _createSettingsItem(Icons.notifications, 'Notifications'),
-          _createSettingsItem(Icons.battery_full, 'Battery'),
-          _createSettingsItem(Icons.storage, 'Storage'),
-          _createSettingsItem(Icons.volume_up, 'Sound & vibration'),
-          _createSettingsItem(Icons.display_settings, 'Display'),
+          _createSettingsItem(
+              Icons.person_add, 'Alumnos', context), // Agrega el contexto
+          _createSettingsItem(
+              Icons.person, 'Personal', context), // Agrega el contexto
           _createSettingsItem(Icons.wallpaper, 'Mensaje Diario', context),
-          _createSettingsItem(Icons.accessibility, 'Accessibility'),
         ],
       ),
     );
@@ -62,6 +60,20 @@ class SettingsScreen extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (context) => const MensajeDiarioScreen()),
+          );
+        } else if (title == 'Alumnos' && context != null) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    const AlumnosScreen()), // Navega a la nueva pantalla
+          );
+        } else if (title == 'Personal' && context != null) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    const PersonalScreen()), // Navega a la pantalla de personal
           );
         }
       },

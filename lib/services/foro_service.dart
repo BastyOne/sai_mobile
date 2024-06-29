@@ -49,7 +49,8 @@ class ForoService {
     }
   }
 
-  Future<Post> crearPost(int autorId, String pregunta, String contenido,
+  Future<Post> crearPost(
+      int autorId, String pregunta, String contenido, bool esAnonimo,
       [String? archivoPath]) async {
     String? token = await storage.read(key: 'token');
     if (token == null) {
@@ -62,6 +63,7 @@ class ForoService {
     request.fields['autor_id'] = autorId.toString();
     request.fields['pregunta'] = pregunta;
     request.fields['contenido'] = contenido;
+    request.fields['es_anonimo'] = esAnonimo.toString(); // Añadir este campo
 
     if (archivoPath != null) {
       request.files
@@ -72,7 +74,7 @@ class ForoService {
     var response = await http.Response.fromStream(streamedResponse);
 
     if (response.statusCode == 201) {
-      return Post.fromJson(json.decode(response.body));
+      return Post.fromJson(json.decode(response.body)['foro']);
     } else {
       throw Exception(
           'Failed to create post. Status code: ${response.statusCode}');

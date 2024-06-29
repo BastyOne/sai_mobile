@@ -92,7 +92,7 @@ class Incidencia {
 class RespuestaIncidencia {
   final int id;
   final int incidenciaId;
-  final int remitenteId;
+  final int? remitenteId;
   final String remitenteTipo; // 'alumno' o 'personal'
   final String contenido;
   final DateTime fechaRespuesta;
@@ -100,7 +100,7 @@ class RespuestaIncidencia {
   RespuestaIncidencia({
     required this.id,
     required this.incidenciaId,
-    required this.remitenteId,
+    this.remitenteId,
     required this.remitenteTipo,
     required this.contenido,
     required this.fechaRespuesta,
@@ -108,12 +108,13 @@ class RespuestaIncidencia {
 
   factory RespuestaIncidencia.fromJson(Map<String, dynamic> json) {
     return RespuestaIncidencia(
-      id: json['id'],
-      incidenciaId: json['incidencia_id'],
-      remitenteId: json['remitente_id'],
-      remitenteTipo: json['remitente_tipo'],
-      contenido: json['contenido'],
-      fechaRespuesta: DateTime.parse(json['fecharespuesta']),
+      id: json['id'] as int,
+      incidenciaId: json['incidencia_id'] as int,
+      remitenteId:
+          json['remitente_id'] != null ? json['remitente_id'] as int : null,
+      remitenteTipo: json['remitente_tipo'] as String,
+      contenido: json['contenido'] as String,
+      fechaRespuesta: DateTime.parse(json['fecharespuesta'] as String),
     );
   }
 

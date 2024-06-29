@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'controllers/alumnos_controller.dart';
 import 'controllers/foro_controller.dart';
+import 'controllers/personal_controller.dart';
 import 'models/incidencia.dart';
 import 'controllers/mensaje_diario_controller.dart';
 import 'controllers/incidencia_controller.dart';
@@ -32,9 +34,12 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => MensajeDiarioController()),
         ChangeNotifierProvider(create: (_) => IncidenciaController()),
         ChangeNotifierProvider(create: (_) => ForoController()),
+        ChangeNotifierProvider(create: (_) => AlumnosController()),
+        ChangeNotifierProvider(create: (_) => PersonalController())
       ],
       child: MaterialApp(
         title: 'Mi App Incidencias',
+        debugShowCheckedModeBanner: false,
         initialRoute: '/',
         routes: {
           '/': (context) => const LoginView(),
