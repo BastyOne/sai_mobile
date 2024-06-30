@@ -6,7 +6,7 @@ import '../../../services/shared_preferences.dart';
 
 class SeleccionarCategoriaHijoScreen extends StatefulWidget {
   final int userId;
-  final int carreraId; // Añadir este campo
+  final int carreraId;
 
   const SeleccionarCategoriaHijoScreen(
       {super.key, required this.userId, required this.carreraId});
@@ -21,6 +21,36 @@ class SeleccionarCategoriaHijoScreenState
   int? _selectedPersonal;
   int? _selectedCategoriaHijo;
   String? _selectedPrioridad;
+  List<Map<String, dynamic>>? _personalList;
+  List<Map<String, dynamic>>? _categoryList;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPersonal();
+    _loadCategoriasHijo();
+  }
+
+  void _loadPersonal() async {
+    final incidenciaController =
+        Provider.of<IncidenciaController>(context, listen: false);
+    final personal = await incidenciaController.fetchPersonal();
+    setState(() {
+      _personalList = personal
+          .where((personal) => personal['carrera_id'] == widget.carreraId)
+          .toList();
+    });
+  }
+
+  void _loadCategoriasHijo() async {
+    final incidenciaController =
+        Provider.of<IncidenciaController>(context, listen: false);
+    final categoriasHijo = await incidenciaController
+        .fetchCategoriasHijo(incidenciaController.selectedCategoriaPadre!);
+    setState(() {
+      _categoryList = categoriasHijo;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,12 +69,12 @@ class SeleccionarCategoriaHijoScreenState
               _buildQuestionText(context,
                   "¿Quién crees que puede resolver de mejor manera tu problemática?"),
               const SizedBox(height: 16),
-              Center(child: _buildPersonalSelector(incidenciaController)),
+              Center(child: _buildPersonalSelector()),
               const SizedBox(height: 32),
               _buildQuestionText(
                   context, "Especificanos más sobre que trata tu problemática"),
               const SizedBox(height: 16),
-              Center(child: _buildCategorySelector(incidenciaController)),
+              Center(child: _buildCategorySelector()),
               const SizedBox(height: 32),
               _buildQuestionText(
                   context, "¿Qué prioridad le darías a tu problemática?"),
@@ -82,101 +112,81 @@ class SeleccionarCategoriaHijoScreenState
     );
   }
 
-  Widget _buildPersonalSelector(IncidenciaController controller) {
-    return FutureBuilder<List<Map<String, dynamic>>>(
-      future: controller.fetchPersonal(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Text('No personal found');
-        } else {
-          final personalList = snapshot.data!
-              .where((personal) => personal['carrera_id'] == widget.carreraId)
-              .toList();
-          return Wrap(
-            spacing: 16.0,
-            runSpacing: 16.0,
-            children: personalList.map((personal) {
-              final isSelected = _selectedPersonal == personal['id'];
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _selectedPersonal = personal['id'];
-                  });
-                },
-                child: Container(
-                  width: 150,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: isSelected ? const Color(0xFF2196F3) : Colors.white,
-                    borderRadius: BorderRadius.circular(8.0),
-                    border: Border.all(color: const Color(0xFF2196F3)),
-                  ),
-                  child: Center(
-                    child: Text(
-                      personal['tipopersona']['nombre'],
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color:
-                            isSelected ? Colors.white : const Color(0xFF2196F3),
-                        fontSize: 16,
-                      ),
-                    ),
+  Widget _buildPersonalSelector() {
+    if (_personalList == null) {
+      return const CircularProgressIndicator();
+    } else if (_personalList!.isEmpty) {
+      return const Text('No personal found');
+    } else {
+      return Wrap(
+        spacing: 16.0,
+        runSpacing: 16.0,
+        children: _personalList!.map((personal) {
+          final isSelected = _selectedPersonal == personal['id'];
+          return GestureDetector(
+            onTap: () {
+              setState(() {
+                _selectedPersonal = personal['id'];
+              });
+            },
+            child: Container(
+              width: 150,
+              height: 50,
+              decoration: BoxDecoration(
+                color: isSelected ? const Color(0xFF2196F3) : Colors.white,
+                borderRadius: BorderRadius.circular(8.0),
+                border: Border.all(color: const Color(0xFF2196F3)),
+              ),
+              child: Center(
+                child: Text(
+                  personal['tipopersona']['nombre'],
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: isSelected ? Colors.white : const Color(0xFF2196F3),
+                    fontSize: 16,
                   ),
                 ),
-              );
-            }).toList(),
-          );
-        }
-      },
-    );
-  }
-
-  Widget _buildCategorySelector(IncidenciaController controller) {
-    return FutureBuilder<List<Map<String, dynamic>>>(
-      future:
-          controller.fetchCategoriasHijo(controller.selectedCategoriaPadre!),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Text('No categories found');
-        } else {
-          final categoryList = snapshot.data!;
-          return Container(
-            width: 100 * 3 + 32,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            decoration: BoxDecoration(
-              border: Border.all(color: const Color(0xFF2196F3)),
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<int>(
-                isExpanded: true,
-                hint: const Text('Seleccione una subcategoria'),
-                value: _selectedCategoriaHijo,
-                items: categoryList.map((categoria) {
-                  return DropdownMenuItem<int>(
-                    value: categoria['id'],
-                    child: Text(categoria['nombre']),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedCategoriaHijo = value;
-                  });
-                },
               ),
             ),
           );
-        }
-      },
-    );
+        }).toList(),
+      );
+    }
+  }
+
+  Widget _buildCategorySelector() {
+    if (_categoryList == null) {
+      return const CircularProgressIndicator();
+    } else if (_categoryList!.isEmpty) {
+      return const Text('No categories found');
+    } else {
+      return Container(
+        width: 100 * 3 + 32,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+        decoration: BoxDecoration(
+          border: Border.all(color: const Color(0xFF2196F3)),
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton<int>(
+            isExpanded: true,
+            hint: const Text('Seleccione una subcategoria'),
+            value: _selectedCategoriaHijo,
+            items: _categoryList!.map((categoria) {
+              return DropdownMenuItem<int>(
+                value: categoria['id'],
+                child: Text(categoria['nombre']),
+              );
+            }).toList(),
+            onChanged: (value) {
+              setState(() {
+                _selectedCategoriaHijo = value;
+              });
+            },
+          ),
+        ),
+      );
+    }
   }
 
   Widget _buildPrioritySelector(double buttonWidth) {
