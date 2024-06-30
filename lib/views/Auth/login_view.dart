@@ -20,6 +20,45 @@ class LoginViewState extends State<LoginView> {
     color: Color(0xFF00A2E1),
   );
 
+  void _showErrorDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+          title: const Text('Error', style: TextStyle(color: Colors.blue)),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child:
+                  const Text('Aceptar', style: TextStyle(color: Colors.blue)),
+              onPressed: () {
+                Navigator.of(dialogContext).pop(); // Close the dialog
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _login() {
+    final String rut = _rutController.text;
+    final String password = _passwordController.text;
+
+    if (rut.isEmpty || password.isEmpty) {
+      _showErrorDialog(context, 'Todos los campos son requeridos.');
+      return;
+    }
+
+    _loginController.login(rut, password, context).then((success) {
+      if (!success) {
+        _showErrorDialog(context, 'Usuario o contraseña incorrectos.');
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,11 +93,7 @@ class LoginViewState extends State<LoginView> {
               ),
               CustomButton(
                 text: 'INGRESAR',
-                onPressed: () => _loginController.login(
-                  _rutController.text,
-                  _passwordController.text,
-                  context,
-                ),
+                onPressed: _login,
                 textStyle: const TextStyle(
                     color: Color(0xFF00A2E1), fontWeight: FontWeight.w600),
               ),

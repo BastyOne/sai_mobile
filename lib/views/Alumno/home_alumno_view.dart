@@ -167,9 +167,6 @@ class HomeAlumnoViewState extends State<HomeAlumnoView> {
             }, // Pasar carreraId
           );
         }),
-        customButton('Ingresar Pregunta', Icons.question_answer, '#03A9F4', () {
-          Navigator.pushNamed(context, '/ingresarPregunta');
-        }),
         customButton('Preguntas Frecuentes', Icons.help, '#29B6F6', () {
           Navigator.pushNamed(context, '/preguntasFrecuentes');
         }),
@@ -191,7 +188,7 @@ class HomeAlumnoViewState extends State<HomeAlumnoView> {
       style: ElevatedButton.styleFrom(
         backgroundColor:
             Color(int.parse(color.substring(1, 7), radix: 16) + 0xFF000000),
-        minimumSize: const Size(double.infinity, 60),
+        minimumSize: const Size(double.infinity, 80), // Ajusta la altura
         padding: const EdgeInsets.symmetric(vertical: 10),
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.zero,

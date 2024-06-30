@@ -5,7 +5,7 @@ import '../services/shared_preferences.dart';
 class LoginController {
   final AuthService apiService = AuthService();
 
-  void login(String rut, String password, BuildContext context) async {
+  Future<bool> login(String rut, String password, BuildContext context) async {
     try {
       final user = await apiService.login(rut, password);
       if (user != null) {
@@ -27,18 +27,14 @@ class LoginController {
             );
             break;
           default:
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content:
-                    Text('Tipo de usuario desconocido: ${user.userType}')));
-            break;
+            return false;
         }
+        return true; // Login exitoso
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Credenciales inválidas')));
+        return false; // Login fallido
       }
     } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Error: $e')));
+      return false; // Error en el login
     }
   }
 }
