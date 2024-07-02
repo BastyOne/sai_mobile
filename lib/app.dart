@@ -12,6 +12,7 @@ import 'views/alumno/foroViewAlumno/detalle_post_view.dart';
 import 'views/alumno/foroViewAlumno/foro_alumno_view.dart';
 import 'views/alumno/incidenciasViewAlumno/incidencias_status_view.dart';
 import 'views/alumno/incidenciasViewAlumno/chat_incidencia_view.dart';
+import 'views/auth/update_password_view.dart';
 import 'views/personal/settingsPersonal/settings_view.dart';
 import 'views/personal/estadisticasViewPersonal/stats_view.dart';
 import 'views/personal/incidenciasViewPersonal/chat_incidencia_personal_view.dart';
@@ -23,6 +24,8 @@ import 'views/alumno/preguntasViewAlumno/preguntas_alumno_view.dart';
 import 'views/alumno/incidenciasViewAlumno/seleccionar_categoria_view.dart';
 import 'views/alumno/incidenciasViewAlumno/seleccionar_subcategoria_view.dart';
 import 'views/alumno/incidenciasViewAlumno/agregar_descripcion_view.dart';
+import 'views/auth/forgot_password_view.dart';
+import 'views/auth/reset_password_view.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -59,6 +62,8 @@ class MyApp extends StatelessWidget {
                   as Map<String, dynamic>)['userId'] as int),
           '/estadisticasPersonal': (context) => const VerEstadisticasScreen(),
           '/settings': (context) => const SettingsScreen(),
+          '/forgot_password': (context) => const ForgotPasswordView(),
+          '/update_password': (context) => const UpdatePasswordView(),
         },
         onGenerateRoute: (settings) {
           if (settings.name == '/home_alumno') {
@@ -134,6 +139,13 @@ class MyApp extends StatelessWidget {
                 },
               );
             }
+          } else if (settings.name == '/reset_password') {
+            final args = settings.arguments as Map<String, dynamic>;
+            return MaterialPageRoute(
+              builder: (context) {
+                return ResetPasswordView(email: args['email']);
+              },
+            );
           }
           return null;
         },

@@ -34,6 +34,54 @@ class AuthService {
     }
   }
 
+  Future<void> forgotPassword(String email) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/api/auth/forgot-password'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'email': email}),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception(
+          'Failed to send reset email. Status code: ${response.statusCode}, Response: ${response.body}');
+    }
+  }
+
+  Future<void> resetPassword(
+      String email, String token, String newPassword) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/api/auth/reset-password'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'token': token, 'newPassword': newPassword}),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception(
+          'Failed to reset password. Status code: ${response.statusCode}, Response: ${response.body}');
+    }
+  }
+
+  Future<Map<String, dynamic>> updatePassword(
+      String rut, String currentPassword, String newPassword) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/api/auth/update-password'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({
+        'rut': rut,
+        'currentPassword': currentPassword,
+        'newPassword': newPassword,
+        'confirmNewPassword': newPassword
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return {'success': true};
+    } else {
+      final errorData = json.decode(response.body);
+      return {'success': false, 'message': errorData['message']};
+    }
+  }
+
   Future<dynamic> getProtectedData() async {
     String? token = await storage.read(key: 'token');
 

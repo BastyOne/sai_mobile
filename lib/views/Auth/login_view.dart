@@ -87,7 +87,9 @@ class LoginViewState extends State<LoginView> {
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/forgot_password');
+                  },
                   child: Text('Olvidé mi contraseña', style: buttonTextStyle),
                 ),
               ),
@@ -98,7 +100,9 @@ class LoginViewState extends State<LoginView> {
                     color: Color(0xFF00A2E1), fontWeight: FontWeight.w600),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, '/update_password');
+                },
                 child: Text('Cambiar contraseña', style: buttonTextStyle),
               ),
               const SizedBox(height: 10),

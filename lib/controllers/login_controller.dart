@@ -37,4 +37,34 @@ class LoginController {
       return false; // Error en el login
     }
   }
+
+  Future<bool> sendResetEmail(String email) async {
+    try {
+      await apiService.forgotPassword(email);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> resetPassword(
+      String email, String token, String newPassword) async {
+    try {
+      await apiService.resetPassword(email, token, newPassword);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<Map<String, dynamic>> updatePassword(
+      String rut, String currentPassword, String newPassword) async {
+    try {
+      final result =
+          await apiService.updatePassword(rut, currentPassword, newPassword);
+      return result;
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
 }
