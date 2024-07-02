@@ -130,6 +130,13 @@ class ChatIncidenciaScreen extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
       child: Row(
         children: [
+          if (updatedIncidencia.reuniones.isNotEmpty)
+            IconButton(
+              icon: const Icon(Icons.info, color: Color(0xFF0575E6)),
+              onPressed: () {
+                _showReunionInfo(context, updatedIncidencia.reuniones.first);
+              },
+            ),
           Expanded(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -179,6 +186,59 @@ class ChatIncidenciaScreen extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  void _showReunionInfo(BuildContext context, Reunion reunion) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('Reunión', style: TextStyle(color: Color(0xFF0575E6))),
+              IconButton(
+                icon: const Icon(Icons.close, color: Color(0xFF0575E6)),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Información de la Reunión',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Color(0xFF0575E6))),
+                const SizedBox(height: 10),
+                Text('Tema: ${reunion.tema}',
+                    style: const TextStyle(color: Color(0xFF0575E6))),
+                const SizedBox(height: 10),
+                Text('Fecha: ${reunion.fecha}',
+                    style: const TextStyle(color: Color(0xFF0575E6))),
+                const SizedBox(height: 10),
+                Text('Hora: ${reunion.hora}',
+                    style: const TextStyle(color: Color(0xFF0575E6))),
+                const SizedBox(height: 10),
+                Text('Lugar: ${reunion.lugar}',
+                    style: const TextStyle(color: Color(0xFF0575E6))),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cerrar',
+                  style: TextStyle(color: Color(0xFF0575E6))),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 

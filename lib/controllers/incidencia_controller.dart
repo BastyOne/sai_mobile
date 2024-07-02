@@ -214,4 +214,25 @@ class IncidenciaController with ChangeNotifier {
       }
     });
   }
+
+  Future<void> programarReunion(int incidenciaId, String fecha, String hora,
+      String lugar, String tema) async {
+    try {
+      await apiService.programarReunion(incidenciaId, fecha, hora, lugar, tema);
+      final incidencia = _incidencias.firstWhere((i) => i.id == incidenciaId);
+      incidencia.reuniones.add(
+        Reunion(
+          id: 0,
+          fecha: fecha,
+          hora: hora,
+          lugar: lugar,
+          tema: tema,
+          incidenciaId: incidenciaId,
+        ),
+      );
+      notifyListeners();
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

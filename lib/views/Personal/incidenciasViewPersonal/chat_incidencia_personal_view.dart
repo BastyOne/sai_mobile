@@ -38,7 +38,6 @@ class ChatIncidenciaPersonalScreenState
 
   @override
   Widget build(BuildContext context) {
-    // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
         Navigator.pop(context, incidenciaUpdated);
@@ -311,6 +310,14 @@ class ChatIncidenciaPersonalScreenState
           ),
           actions: <Widget>[
             TextButton(
+              child: const Text('Agendar Reunión',
+                  style: TextStyle(color: Color(0xFF0575E6))),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _showAgendarReunionModal(context, incidencia.id);
+              },
+            ),
+            TextButton(
               child: Text(
                 incidencia.estado == 'cerrada'
                     ? 'Reabrir Incidencia'
@@ -328,6 +335,161 @@ class ChatIncidenciaPersonalScreenState
                   await incidenciaController.cerrarIncidencia(incidencia.id);
                   incidenciaUpdated = true;
                   _showSuccessDialog(context, 'Incidencia cerrada con éxito');
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showAgendarReunionModal(BuildContext context, int incidenciaId) {
+    final fechaController = TextEditingController();
+    final horaController = TextEditingController();
+    final lugarController = TextEditingController();
+    final temaController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Agendar Reunión'),
+          content: SingleChildScrollView(
+            child: Column(
+              children: [
+                TextField(
+                  controller: fechaController,
+                  decoration: const InputDecoration(
+                    labelText: 'Fecha',
+                    labelStyle: TextStyle(color: Color(0xFF0575E6)),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xFF0575E6)),
+                    ),
+                  ),
+                  onTap: () async {
+                    DateTime? pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2101),
+                      builder: (BuildContext context, Widget? child) {
+                        return Theme(
+                          data: ThemeData.light().copyWith(
+                            colorScheme: const ColorScheme.light(
+                              primary: Color(
+                                  0xFF0575E6), // Color principal del calendario
+                              onPrimary: Colors
+                                  .white, // Color del texto en el calendario
+                              surface:
+                                  Colors.white, // Color de fondo del calendario
+                            ),
+                            dialogBackgroundColor:
+                                Colors.white, // Color de fondo del diálogo
+                          ),
+                          child: child!,
+                        );
+                      },
+                    );
+                    if (pickedDate != null) {
+                      fechaController.text =
+                          DateFormat('yyyy-MM-dd').format(pickedDate);
+                    }
+                  },
+                ),
+                TextField(
+                  controller: horaController,
+                  decoration: const InputDecoration(
+                    labelText: 'Hora',
+                    labelStyle: TextStyle(color: Color(0xFF0575E6)),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xFF0575E6)),
+                    ),
+                  ),
+                  onTap: () async {
+                    TimeOfDay? pickedTime = await showTimePicker(
+                      context: context,
+                      initialTime: TimeOfDay.now(),
+                      builder: (BuildContext context, Widget? child) {
+                        return Theme(
+                          data: ThemeData.light().copyWith(
+                            colorScheme: const ColorScheme.light(
+                              primary: Color(
+                                  0xFF0575E6), // Color principal del reloj
+                              onPrimary:
+                                  Colors.white, // Color del texto en el reloj
+                              surface: Colors.white, // Color de fondo del reloj
+                            ),
+                            dialogBackgroundColor:
+                                Colors.white, // Color de fondo del diálogo
+                          ),
+                          child: child!,
+                        );
+                      },
+                    );
+                    if (pickedTime != null) {
+                      horaController.text = pickedTime.format(context);
+                    }
+                  },
+                ),
+                TextField(
+                  controller: lugarController,
+                  decoration: const InputDecoration(
+                    labelText: 'Lugar',
+                    labelStyle: TextStyle(color: Color(0xFF0575E6)),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xFF0575E6)),
+                    ),
+                  ),
+                ),
+                TextField(
+                  controller: temaController,
+                  decoration: const InputDecoration(
+                    labelText: 'Tema',
+                    labelStyle: TextStyle(color: Color(0xFF0575E6)),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xFF0575E6)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancelar',
+                  style: TextStyle(color: Color(0xFF0575E6))),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Agendar',
+                  style: TextStyle(color: Color(0xFF0575E6))),
+              onPressed: () async {
+                String fecha = fechaController.text.trim();
+                String hora = horaController.text.trim();
+                String lugar = lugarController.text.trim();
+                String tema = temaController.text.trim();
+
+                if (fecha.isNotEmpty &&
+                    hora.isNotEmpty &&
+                    lugar.isNotEmpty &&
+                    tema.isNotEmpty) {
+                  try {
+                    await Provider.of<IncidenciaController>(context,
+                            listen: false)
+                        .programarReunion(
+                            incidenciaId, fecha, hora, lugar, tema);
+                    Navigator.of(context).pop();
+                    _showSuccessDialog(context, 'Reunión agendada con éxito');
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Error al agendar la reunión: $e'),
+                      ),
+                    );
+                  }
                 }
               },
             ),

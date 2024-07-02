@@ -199,4 +199,50 @@ class IncidenciaService {
           'Failed to reopen incidencia. Status code: ${response.statusCode}');
     }
   }
+
+  Future<void> programarReunion(int incidenciaId, String fecha, String hora,
+      String lugar, String tema) async {
+    String? token = await storage.read(key: 'token');
+    if (token == null) throw Exception('No token found in storage');
+
+    final response = await http.post(
+      Uri.parse('$baseUrl/api/reunion/programar'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: json.encode({
+        'incidencia_id': incidenciaId,
+        'fecha': fecha,
+        'hora': hora,
+        'lugar': lugar,
+        'tema': tema,
+      }),
+    );
+
+    if (response.statusCode != 201) {
+      throw Exception(
+          'Failed to schedule meeting. Status code: ${response.statusCode}');
+    }
+  }
+
+  Future<List<dynamic>> fetchReunionesPorPersonal(int personalId) async {
+    String? token = await storage.read(key: 'token');
+    if (token == null) throw Exception('No token found in storage');
+
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/reunion/personal/$personalId/reuniones'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception(
+          'Failed to load reuniones. Status code: ${response.statusCode}');
+    }
+  }
 }

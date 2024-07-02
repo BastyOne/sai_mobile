@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../views/alumno/settingsAlumno/actualizar_datos_alumno.dart';
+import '../views/personal/incidenciasViewPersonal/agenda_reuniones_personal_view.dart';
 import '../views/personal/settingsPersonal/settings_view.dart';
 
 class CustomDrawer extends StatelessWidget {
@@ -65,7 +66,8 @@ class CustomDrawer extends StatelessWidget {
                         onTap: () => Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => UpdateAlumnoScreen()),
+                                  builder: (context) =>
+                                      const UpdateAlumnoScreen()),
                             )),
                   if (userType == 'alumno')
                     _createDrawerItem(
@@ -91,6 +93,14 @@ class CustomDrawer extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => const SettingsScreen()))),
+                  if (userType == 'personal')
+                    _createDrawerItem(
+                        icon: Icons.calendar_today,
+                        text: 'Agenda',
+                        onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const AgendaScreen()))),
                   ListTile(
                     leading: const Icon(Icons.logout, color: Colors.white),
                     title: const Text('Cerrar Sesión',
